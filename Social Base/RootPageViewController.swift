@@ -1,11 +1,3 @@
-//
-//  RootPageViewController.swift
-//  Social Base
-//
-//  Created by Carter on 2018-12-17.
-//  Copyright © 2018 Carter. All rights reserved.
-//
-
 import UIKit
 
 class RootPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
