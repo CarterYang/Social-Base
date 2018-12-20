@@ -1,5 +1,7 @@
 import UIKit
-import Firebase
+import AVOSCloud
+import AVOSCloudIM
+import AVOSCloudCrashReporting
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -8,8 +10,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        AVOSCloud.setApplicationId("3fgqRlL3RuFPyJfhATCHX5c2-gzGzoHsz", clientKey: "btuOvI5YFtsij0EGoo1EK35K")
         
-        FirebaseApp.configure()
+        //跟踪应用打开情况
+        //AVAnalytics.trackAppOpened(launchOptions: launchOptions)
+        
         return true
     }
 

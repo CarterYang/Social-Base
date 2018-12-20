@@ -1,6 +1,9 @@
 import UIKit
+import AVOSCloud
+import AVOSCloudIM
+import AVOSCloudCrashReporting
 
-class SignUpViewController: UIViewController {
+class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     
     @IBOutlet weak var profileImage: UIImageView!
@@ -17,8 +20,12 @@ class SignUpViewController: UIViewController {
     //获取虚拟键盘的大小
     var keyboard : CGRect = CGRect()
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 屏幕初始化
+    /////////////////////////////////////////////////////////////////////////////////
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         //滚动视图的窗口尺寸
         scrollView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width
             , height: self.view.frame.height)
@@ -35,9 +42,21 @@ class SignUpViewController: UIViewController {
         hideTap.numberOfTapsRequired = 1
         self.view.isUserInteractionEnabled = true
         self.view.addGestureRecognizer(hideTap)
+        
+        //为profile image添加单击手势识别
+        let imgTap = UITapGestureRecognizer(target: self, action: #selector(loadImage))
+        imgTap.numberOfTapsRequired = 1
+        profileImage.isUserInteractionEnabled = true
+        profileImage.addGestureRecognizer(imgTap)
+        
+        //改变profile image为圆形
+        profileImage.layer.cornerRadius = profileImage.frame.width / 2
+        profileImage.clipsToBounds = true //减掉多余的部分
     }
     
+    /////////////////////////////////////////////////////////////////////////////////
     // MARK: 虚拟键盘出现消失时对Scroll view的操作
+    /////////////////////////////////////////////////////////////////////////////////
     @objc func showKeyboard(notification: Notification) {
         //定义keyboard大小
         if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
@@ -63,12 +82,88 @@ class SignUpViewController: UIViewController {
     @objc func hideKeyboardTap() {
         self.view.endEditing(true)
     }
-
-    @IBAction func signUpButtonPressed(_ sender: UIButton) {
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 获取照片作为profile image
+    /////////////////////////////////////////////////////////////////////////////////
+    
+    //让用户从相册中选择照片
+    @objc func loadImage() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.sourceType = .photoLibrary
+        picker.allowsEditing = true
+        present(picker, animated: true, completion: nil)
     }
     
-    //以动画的方式去掉通过modally进来的View controller
+    //把选择好的照片放入profilemage内
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        profileImage.image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    //当用户点击取消选择照片
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击确认Sign up按钮
+    /////////////////////////////////////////////////////////////////////////////////
+    @IBAction func signUpButtonPressed(_ sender: UIButton) {
+        
+        //隐藏Keyboard
+        self.view.endEditing(true)
+        
+        //当信息不完全时提示警告信息
+        if usernameTextField.text!.isEmpty || emailTextField.text!.isEmpty || passwordTextField.text!.isEmpty || repeatPasswordTextField.text!.isEmpty {
+            
+            //弹出对话框
+            let alert = UIAlertController(title: "Attention", message: "Please fill infomation", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+        }
+        
+        //判断两次密码输入是否一样
+        if passwordTextField.text != repeatPasswordTextField.text {
+            
+            //弹出对话框
+            let alert = UIAlertController(title: "Attention", message: "Password not same", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+        }
+        
+        //发送基本数据到服务器
+        let user = AVUser()
+        user.username = usernameTextField.text?.lowercased()
+        user.email = emailTextField.text?.lowercased()
+        user.password = passwordTextField.text
+        //发送头像数据到服务器
+        let profileImageData = UIImage.jpegData(profileImage.image!)(compressionQuality: 0.75)!
+        let profileImageFile = AVFile(name: "profileImage.jpg", data: profileImageData)
+        user["profileImage"] = profileImageFile
+        //开始注册
+        user.signUpInBackground { (success: Bool, error: Error?) in
+            if success {
+                print("成功")
+            }
+            else {
+                print("失败")
+            }
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 关闭Sign up页面
+    /////////////////////////////////////////////////////////////////////////////////
     @IBAction func goToLogInButtonPressed(_ sender: UIButton) {
+        //以动画的方式去掉通过modally进来的View controller
         self.dismiss(animated: true, completion: nil)
     }
 }
