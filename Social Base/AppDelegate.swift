@@ -16,6 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //跟踪应用打开情况
         //AVAnalytics.trackAppOpened(launchOptions: launchOptions)
         
+        //如果有登录信息直接跳转页面
+        login()
+        
         return true
     }
 
@@ -39,6 +42,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
+    func login() {
+        //获取UserDefaults中z储存的用户信息
+        let username: String? = UserDefaults.standard.string(forKey: "username")
+        
+        //如果用户之前成功登陆过
+        if username != nil {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let myTabBar = storyboard.instantiateViewController(withIdentifier: "TabBar") as! UITabBarController
+            window?.rootViewController = myTabBar
+        }
+    }
 
 }
 

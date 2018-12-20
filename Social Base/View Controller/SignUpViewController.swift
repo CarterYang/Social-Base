@@ -78,7 +78,9 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         }
     }
     
-    //影藏视图中的虚拟键盘
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 隐藏虚拟键盘
+    /////////////////////////////////////////////////////////////////////////////////
     @objc func hideKeyboardTap() {
         self.view.endEditing(true)
     }
@@ -152,6 +154,14 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         user.signUpInBackground { (success: Bool, error: Error?) in
             if success {
                 print("成功")
+                
+                //用UserDefaults记录登录用户
+                UserDefaults.standard.set(user.username, forKey: "username")
+                UserDefaults.standard.synchronize()
+                
+                //从AppDelegate.swift中调用login方法，让成功注册的用户直接进入主界面
+                let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                appDelegate.login()
             }
             else {
                 print("失败")
