@@ -52,6 +52,16 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         //改变profile image为圆形
         profileImage.layer.cornerRadius = profileImage.frame.width / 2
         profileImage.clipsToBounds = true //减掉多余的部分
+        
+        //页面布局调整
+//        let viewWidth = self.view.frame.width
+//        profileImage.frame = CGRect(x: self.view.frame.width / 2 - 40, y: 80, width: 80, height: 80)
+//        usernameTextField.frame = CGRect(x: 20, y: profileImage.frame.origin.y + 100, width: viewWidth - 40, height: 30)
+//        emailTextField.frame = CGRect(x: 20, y: usernameTextField.frame.origin.y + 50, width: viewWidth - 40, height: 30)
+//        passwordTextField.frame = CGRect(x: 20, y: emailTextField.frame.origin.y + 50, width: viewWidth - 40, height: 30)
+//        repeatPasswordTextField.frame = CGRect(x: 20, y: passwordTextField.frame.origin.y + 50, width: viewWidth - 40, height: 30)
+//        signUpButton.frame = CGRect(x: 20, y: repeatPasswordTextField.frame.origin.y + 50, width: viewWidth - 40, height: 30)
+//        goToLogInButton.frame = CGRect(x: 20, y: signUpButton.frame.origin.y + 70, width: viewWidth - 40, height: 30)
     }
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +153,7 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         
         //发送基本数据到服务器
         let user = AVUser()
-        user.username = usernameTextField.text?.lowercased()
+        user.username = usernameTextField.text
         user.email = emailTextField.text?.lowercased()
         user.password = passwordTextField.text
         //发送头像数据到服务器
@@ -174,6 +184,7 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
     /////////////////////////////////////////////////////////////////////////////////
     @IBAction func goToLogInButtonPressed(_ sender: UIButton) {
         //以动画的方式去掉通过modally进来的View controller
+        self.view.endEditing(true)
         self.dismiss(animated: true, completion: nil)
     }
 }

@@ -14,6 +14,12 @@ class ResetPasswordViewController: UIViewController {
     /////////////////////////////////////////////////////////////////////////////////
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //通过Tap手势让虚拟键盘消失
+        let hideTap = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        hideTap.numberOfTapsRequired = 1
+        self.view.isUserInteractionEnabled = true
+        self.view.addGestureRecognizer(hideTap)
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +62,14 @@ class ResetPasswordViewController: UIViewController {
     // MARK: 取消重置密码功能
     /////////////////////////////////////////////////////////////////////////////////
     @IBAction func cancelButtonPressed(_ sender: UIButton) {
+        self.view.endEditing(true)
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 隐藏虚拟键盘
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func hideKeyboard(recognizer: UITapGestureRecognizer) {
+        self.view.endEditing(true)
     }
 }

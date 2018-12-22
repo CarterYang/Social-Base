@@ -6,6 +6,11 @@
 	<string>Social base想要使用该设备的媒体库</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Social base想要使用该设备的照片库</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

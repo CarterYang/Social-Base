@@ -5,6 +5,7 @@ import AVOSCloudCrashReporting
 
 class LogInViewController: UIViewController {
 
+    @IBOutlet weak var label: UILabel!
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var forgotPasswordButton: UIButton!
@@ -22,6 +23,14 @@ class LogInViewController: UIViewController {
         hideTap.numberOfTapsRequired = 1
         self.view.isUserInteractionEnabled = true
         self.view.addGestureRecognizer(hideTap)
+        
+        //页面布局调整
+//        label.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: 50)
+//        usernameTextField.frame = CGRect(x: 10, y: label.frame.origin.y + 100, width: self.view.frame.width - 20, height: 30)
+//        passwordTextField.frame = CGRect(x: 10, y: usernameTextField.frame.origin.y + 50, width: self.view.frame.width - 20, height: 30)
+//        forgotPasswordButton.frame = CGRect(x: 10, y: passwordTextField.frame.origin.y + 30, width: self.view.frame.width - 20, height: 30)
+//        logInButton.frame = CGRect(x: 10, y: forgotPasswordButton.frame.origin.y + 50, width: self.view.frame.width - 20, height: 40)
+//        goToSignUpButton.frame = CGRect(x: 10, y: logInButton.frame.origin.y + 70, width: self.view.frame.width - 20, height: 30)
     }
 
     /////////////////////////////////////////////////////////////////////////////////
