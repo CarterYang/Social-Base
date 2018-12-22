@@ -10,7 +10,7 @@
 		AD41A15A21CC3066004FED30 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15921CC3066004FED30 /* ResetPasswordViewController.swift */; };
 		AD41A15C21CC6603004FED30 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15B21CC6603004FED30 /* HomeViewController.swift */; };
 		AD41A15E21CC665E004FED30 /* HomeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15D21CC665E004FED30 /* HomeHeaderView.swift */; };
-		AD41A16021CC6B6E004FED30 /* HomePicCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15F21CC6B6E004FED30 /* HomePicCellView.swift */; };
+		AD41A16021CC6B6E004FED30 /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15F21CC6B6E004FED30 /* PictureCell.swift */; };
 		AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */; };
 		AD83F8D721C773BE00EFAB16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD83F8D521C773BE00EFAB16 /* Main.storyboard */; };
 		AD83F8D921C773C000EFAB16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD83F8D821C773C000EFAB16 /* Assets.xcassets */; };
@@ -28,7 +28,7 @@
 		AD41A15921CC3066004FED30 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		AD41A15B21CC6603004FED30 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		AD41A15D21CC665E004FED30 /* HomeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderView.swift; sourceTree = "<group>"; };
-		AD41A15F21CC6B6E004FED30 /* HomePicCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePicCellView.swift; sourceTree = "<group>"; };
+		AD41A15F21CC6B6E004FED30 /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
 		AD83F8CE21C773BE00EFAB16 /* Social Base.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Social Base.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD83F8D621C773BE00EFAB16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 				AD83F8F321C8FB5100EFAB16 /* SignUpViewController.swift */,
 				AD41A15B21CC6603004FED30 /* HomeViewController.swift */,
 				AD41A15D21CC665E004FED30 /* HomeHeaderView.swift */,
-				AD41A15F21CC6B6E004FED30 /* HomePicCellView.swift */,
+				AD41A15F21CC6B6E004FED30 /* PictureCell.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -253,7 +253,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD41A16021CC6B6E004FED30 /* HomePicCellView.swift in Sources */,
+				AD41A16021CC6B6E004FED30 /* PictureCell.swift in Sources */,
 				AD83F8E421C777A700EFAB16 /* RootPageViewController.swift in Sources */,
 				AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */,
 				AD41A15A21CC3066004FED30 /* ResetPasswordViewController.swift in Sources */,
