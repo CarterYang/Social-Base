@@ -46,12 +46,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //获取UserDefaults中z储存的用户信息
         let username: String? = UserDefaults.standard.string(forKey: "username")
         
-        //如果用户之前成功登陆过
+        //如果用户不是空的
         if username != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let myTabBar = storyboard.instantiateViewController(withIdentifier: "TabBar") as! UITabBarController
             window?.rootViewController = myTabBar
         }
+        
+//        AVUser.current()?.follow("5c1f4f671579a3005fefa43e") {(success: Bool, error: Error?) in
+//            if success {
+//                print("关注成功")
+//            }
+//            else {
+//                print("关注失败")
+//            }
+//        }
     }
 
 }

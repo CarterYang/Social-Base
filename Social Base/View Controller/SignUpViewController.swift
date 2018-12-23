@@ -160,21 +160,29 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         let profileImageData = UIImage.jpegData(profileImage.image!)(compressionQuality: 0.75)!
         let profileImageFile = AVFile(name: "profileImage.jpg", data: profileImageData)
         user["profileImage"] = profileImageFile
+        
         //开始注册
+        UserDefaults.standard.set(user.username, forKey: "username")
+        UserDefaults.standard.synchronize()
         user.signUpInBackground { (success: Bool, error: Error?) in
             if success {
                 print("成功")
                 
-                //用UserDefaults记录登录用户
-                UserDefaults.standard.set(user.username, forKey: "username")
-                UserDefaults.standard.synchronize()
-                
-                //从AppDelegate.swift中调用login方法，让成功注册的用户直接进入主界面
-                let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-                appDelegate.login()
+                //注册成功后登陆
+                AVUser.logInWithUsername(inBackground: user.username!, password: user.password!) { (user: AVUser?, error: Error?) in
+                    if let user = user {
+                        //记住用户
+                        UserDefaults.standard.set(user.username, forKey: "username")
+                        UserDefaults.standard.synchronize()
+                        
+                        //从AppDelegate.swift中调用login方法，让用户直接进入主界面
+                        let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                        appDelegate.login()
+                    }
+                }
             }
             else {
-                print("失败")
+                print(error?.localizedDescription)
             }
         }
     }

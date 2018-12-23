@@ -24,5 +24,4 @@ class HomeHeaderView: UICollectionReusableView {
     @IBOutlet weak var followingsTitle: UILabel!                    //关注名称
     @IBOutlet weak var editProfile: UIButton!                       //编辑资料
     
-    
 }
