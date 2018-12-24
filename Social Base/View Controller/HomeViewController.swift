@@ -197,7 +197,7 @@ class HomeViewController: UICollectionViewController {
     /////////////////////////////////////////////////////////////////////////////////
     @objc func followersTapAction() {
         //载入FollowViewController的视图
-        let followers = self.storyboard?.instantiateViewController(withIdentifier: "FollowersVC") as! FollowViewController
+        let followers = self.storyboard?.instantiateViewController(withIdentifier: "FollowVC") as! FollowViewController
         followers.user = AVUser.current()!.username!
         followers.show = "Followers"
         
@@ -209,7 +209,7 @@ class HomeViewController: UICollectionViewController {
     /////////////////////////////////////////////////////////////////////////////////
     @objc func followingsTapAction() {
         //载入FollowViewController的视图
-        let followings = self.storyboard?.instantiateViewController(withIdentifier: "FollowersVC") as! FollowViewController
+        let followings = self.storyboard?.instantiateViewController(withIdentifier: "FollowVC") as! FollowViewController
         followings.user = AVUser.current()!.username!
         followings.show = "Followings"
         
