@@ -25,7 +25,7 @@ class FollowViewController: UITableViewController {
         super.viewDidLoad()
         
         //Table的格式
-        tableView.rowHeight = 80.0
+        tableView.rowHeight = view.frame.width / 4
         tableView.separatorStyle = .none
         
         self.navigationItem.title = show

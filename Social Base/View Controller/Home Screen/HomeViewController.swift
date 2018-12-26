@@ -5,7 +5,7 @@ import AVOSCloudCrashReporting
 
 //private let reuseIdentifier = "Cell"
 
-class HomeViewController: UICollectionViewController {
+class HomeViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
 
     //刷新控件,负责滚动视图拉拽的刷新动画
     var refresher = UIRefreshControl()
@@ -43,6 +43,30 @@ class HomeViewController: UICollectionViewController {
 //    override func numberOfSections(in collectionView: UICollectionView) -> Int {
 //        return 0
 //    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 设置单元格布局
+    /////////////////////////////////////////////////////////////////////////////////
+    //该方法是用来设置 CollectionViewCell 的大小
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = CGSize(width: (self.view.frame.width - 2) / 3, height: (self.view.frame.width - 2) / 3)
+        return size
+    }
+    
+//    //该方法是用来设置 CollectionViewCell 四周的边距
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+//    }
+//
+    //该方法是用来设置同一行 CollectionViewCell 之间的间距
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+
+    //该方法是用来设置同一列 CollectionViewCell 之间的间距
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
 
     /////////////////////////////////////////////////////////////////////////////////
     // MARK: 确定Collection中需要多少单元格

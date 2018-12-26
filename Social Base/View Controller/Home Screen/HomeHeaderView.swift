@@ -25,6 +25,33 @@ class HomeHeaderView: UICollectionReusableView {
     @IBOutlet weak var editProfile: UIButton!                       //编辑资料
     
     /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 视图初始化
+    /////////////////////////////////////////////////////////////////////////////////
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        //页面布局
+        let width = UIScreen.main.bounds.width
+        
+        //头像布局
+        profileImage.frame = CGRect(x: width / 16, y: 15, width: width / 4, height: width / 4)
+        //统计数据布局
+        posts.frame = CGRect(x: width / 2.5, y: profileImage.frame.origin.y, width: 50, height: 30)
+        followers.frame = CGRect(x: width / 1.6, y: profileImage.frame.origin.y, width: 50, height: 30)
+        followings.frame = CGRect(x: width / 1.2, y: profileImage.frame.origin.y, width: 50, height: 30)
+        //统计数据label布局
+        postsTitle.center = CGPoint(x: posts.center.x, y: posts.center.y + 20)
+        followersTitle.center = CGPoint(x: followers.center.x, y: followers.center.y + 20)
+        followingsTitle.center = CGPoint(x: followings.center.x, y: followings.center.y + 20)
+        //编辑资料布局布局
+        editProfile.frame = CGRect(x: postsTitle.frame.origin.x, y: postsTitle.center.y + 25, width: followings.frame.origin.x - posts.frame.origin.x + 40, height: 30)
+        //信息布局
+        displayName.frame = CGRect(x: profileImage.frame.origin.x, y: profileImage.frame.origin.y + profileImage.frame.height, width: width - 30, height: 30)
+        bio.frame = CGRect(x: displayName.frame.origin.x, y: displayName.frame.origin.y + 30, width: width - 30, height: 30)
+        
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
     // MARK: 从GuestVC中单击关注按钮
     /////////////////////////////////////////////////////////////////////////////////
     @IBAction func followButtonPressed(_ sender: UIButton) {

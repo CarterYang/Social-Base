@@ -19,8 +19,19 @@ class FollowCell: UITableViewCell {
     
     var user: AVUser!
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 视图初始化
+    /////////////////////////////////////////////////////////////////////////////////
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        //Cell布局
+        let width = UIScreen.main.bounds.width
+        
+        profileImage.frame = CGRect(x: 10, y: 10, width: width / 5.3, height: width / 5.3)
+        usernameLabel.frame = CGRect(x: profileImage.frame.width + 20, y: profileImage.center.y - 15, width: width / 3.2, height: 30)
+        followButton.frame = CGRect(x: width - width / 3.5 - 20, y: profileImage.center.y - 15, width: width / 3.5, height: 30)
+        
         //改变profile image为圆形
         profileImage.layer.cornerRadius = profileImage.frame.width / 2
         profileImage.clipsToBounds = true //减掉多余的部分

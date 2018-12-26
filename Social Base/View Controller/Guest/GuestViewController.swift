@@ -6,7 +6,7 @@ import AVOSCloudCrashReporting
 //全局变量，用来储存当前用户所浏览的关注人员队列
 var guestArray = [AVUser]()
 
-class GuestViewController: UICollectionViewController {
+class GuestViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     var postIdArray = [String]()
     var pictureArray = [AVFile]()
@@ -48,6 +48,14 @@ class GuestViewController: UICollectionViewController {
         
         //载入用户的posts
         loadPosts()
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 设置单元格布局
+    /////////////////////////////////////////////////////////////////////////////////
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = CGSize(width: self.view.frame.width / 3, height: self.view.frame.width / 3)
+        return size
     }
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -303,5 +311,4 @@ class GuestViewController: UICollectionViewController {
             alpha: CGFloat(1.0)
         )
     }
-    
 }
