@@ -7,10 +7,10 @@ import AVOSCloudCrashReporting
 
 class HomeViewController: UICollectionViewController {
 
-    //刷新控件,用于表格视图或集合视图上处理网络数据刷新
+    //刷新控件,负责滚动视图拉拽的刷新动画
     var refresher = UIRefreshControl()
     
-    //每一页载入帖子的数量
+    //每次从云端下载照片的数量
     var postPerPage: Int = 12
     
     var postIdArray = [String]()
@@ -21,6 +21,9 @@ class HomeViewController: UICollectionViewController {
     /////////////////////////////////////////////////////////////////////////////////
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //允许垂直的拉拽刷新动作
+        self.collectionView.alwaysBounceVertical = true
 
         //设置导航栏中的title
         self.navigationItem.title = AVUser.current()?.username
@@ -29,6 +32,9 @@ class HomeViewController: UICollectionViewController {
         //refresher = UIRefreshControl()
         refresher.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
         collectionView.addSubview(refresher)
+        
+        //设置CollectionView的背景色为白色
+        self.collectionView.backgroundColor = .white
         
         //载入用户的posts
         loadPosts()
@@ -48,11 +54,11 @@ class HomeViewController: UICollectionViewController {
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 将图片载入到cell中
+    // MARK: 配置单元格
     /////////////////////////////////////////////////////////////////////////////////
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        //从CollectionView中获取单元格对象
+        //定义Cell
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! PictureCell
         
         //从PictureArray中提取图片
@@ -69,8 +75,9 @@ class HomeViewController: UICollectionViewController {
     }
     
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 当ColloctionView在屏幕上显示附属视图的时候调用
+    // MARK: 配置Header
     /////////////////////////////////////////////////////////////////////////////////
+    //当ColloctionView在屏幕上显示附属视图的时候调用
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         //从CollectionView的可复用队列中获取Header View
@@ -196,6 +203,7 @@ class HomeViewController: UICollectionViewController {
     // MARK: 单击”关注者“后调用方法
     /////////////////////////////////////////////////////////////////////////////////
     @objc func followersTapAction() {
+        guestArray.append(AVUser.current()!)
         //载入FollowViewController的视图
         let followers = self.storyboard?.instantiateViewController(withIdentifier: "FollowVC") as! FollowViewController
         followers.user = AVUser.current()!.username!
@@ -208,6 +216,7 @@ class HomeViewController: UICollectionViewController {
     // MARK: 单击”关注“后调用方法
     /////////////////////////////////////////////////////////////////////////////////
     @objc func followingsTapAction() {
+        guestArray.append(AVUser.current()!)
         //载入FollowViewController的视图
         let followings = self.storyboard?.instantiateViewController(withIdentifier: "FollowVC") as! FollowViewController
         followings.user = AVUser.current()!.username!
@@ -215,4 +224,25 @@ class HomeViewController: UICollectionViewController {
         
         self.navigationController?.pushViewController(followings, animated: true)
     }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 退出登录
+    /////////////////////////////////////////////////////////////////////////////////
+    @IBAction func Logout(_ sender: UIBarButtonItem) {
+        //登出用户
+        AVUser.logOut()
+        
+        //从UserDefaults中删除用户登录记录
+        UserDefaults.standard.removeObject(forKey: "username")
+        UserDefaults.standard.synchronize()
+        
+        //清除GuestArray
+        guestArray.removeAll()
+        
+        //将页面转到登录界面
+        let logIn = self.storyboard?.instantiateViewController(withIdentifier: "LogInVC")
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.window?.rootViewController = logIn
+    }
+    
 }

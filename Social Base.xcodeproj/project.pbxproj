@@ -13,6 +13,7 @@
 		AD41A16021CC6B6E004FED30 /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15F21CC6B6E004FED30 /* PictureCell.swift */; };
 		AD41A16321CF992B004FED30 /* FollowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A16221CF992B004FED30 /* FollowViewController.swift */; };
 		AD41A16521CF996A004FED30 /* FollowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A16421CF996A004FED30 /* FollowCell.swift */; };
+		AD41A16A21D0D95E004FED30 /* GuestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A16921D0D95E004FED30 /* GuestViewController.swift */; };
 		AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */; };
 		AD83F8D721C773BE00EFAB16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD83F8D521C773BE00EFAB16 /* Main.storyboard */; };
 		AD83F8D921C773C000EFAB16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD83F8D821C773C000EFAB16 /* Assets.xcassets */; };
@@ -33,6 +34,7 @@
 		AD41A15F21CC6B6E004FED30 /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
 		AD41A16221CF992B004FED30 /* FollowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowViewController.swift; sourceTree = "<group>"; };
 		AD41A16421CF996A004FED30 /* FollowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCell.swift; sourceTree = "<group>"; };
+		AD41A16921D0D95E004FED30 /* GuestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestViewController.swift; sourceTree = "<group>"; };
 		AD83F8CE21C773BE00EFAB16 /* Social Base.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Social Base.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD83F8D621C773BE00EFAB16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -72,6 +74,43 @@
 				0736F3D4BF7296FFD29FAE8A /* Pods-Social Base.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		AD41A16621D0D89D004FED30 /* LogIn and SignUp */ = {
+			isa = PBXGroup;
+			children = (
+				AD83F8F121C8FB3B00EFAB16 /* LogInViewController.swift */,
+				AD41A15921CC3066004FED30 /* ResetPasswordViewController.swift */,
+				AD83F8F321C8FB5100EFAB16 /* SignUpViewController.swift */,
+			);
+			path = "LogIn and SignUp";
+			sourceTree = "<group>";
+		};
+		AD41A16721D0D8D0004FED30 /* Home Screen */ = {
+			isa = PBXGroup;
+			children = (
+				AD41A15B21CC6603004FED30 /* HomeViewController.swift */,
+				AD41A15D21CC665E004FED30 /* HomeHeaderView.swift */,
+				AD41A15F21CC6B6E004FED30 /* PictureCell.swift */,
+			);
+			path = "Home Screen";
+			sourceTree = "<group>";
+		};
+		AD41A16821D0D8EF004FED30 /* Follow and Unfollow */ = {
+			isa = PBXGroup;
+			children = (
+				AD41A16221CF992B004FED30 /* FollowViewController.swift */,
+				AD41A16421CF996A004FED30 /* FollowCell.swift */,
+			);
+			path = "Follow and Unfollow";
+			sourceTree = "<group>";
+		};
+		AD41A16B21D0D965004FED30 /* Guest */ = {
+			isa = PBXGroup;
+			children = (
+				AD41A16921D0D95E004FED30 /* GuestViewController.swift */,
+			);
+			path = Guest;
 			sourceTree = "<group>";
 		};
 		AD83F8C521C773BE00EFAB16 = {
@@ -118,14 +157,10 @@
 			isa = PBXGroup;
 			children = (
 				AD41A15821CBFBE9004FED30 /* Social Base-Bridging-Header.h */,
-				AD83F8F121C8FB3B00EFAB16 /* LogInViewController.swift */,
-				AD41A15921CC3066004FED30 /* ResetPasswordViewController.swift */,
-				AD83F8F321C8FB5100EFAB16 /* SignUpViewController.swift */,
-				AD41A15B21CC6603004FED30 /* HomeViewController.swift */,
-				AD41A15D21CC665E004FED30 /* HomeHeaderView.swift */,
-				AD41A15F21CC6B6E004FED30 /* PictureCell.swift */,
-				AD41A16221CF992B004FED30 /* FollowViewController.swift */,
-				AD41A16421CF996A004FED30 /* FollowCell.swift */,
+				AD41A16621D0D89D004FED30 /* LogIn and SignUp */,
+				AD41A16721D0D8D0004FED30 /* Home Screen */,
+				AD41A16821D0D8EF004FED30 /* Follow and Unfollow */,
+				AD41A16B21D0D965004FED30 /* Guest */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -269,6 +304,7 @@
 				AD83F8F221C8FB3B00EFAB16 /* LogInViewController.swift in Sources */,
 				AD41A15E21CC665E004FED30 /* HomeHeaderView.swift in Sources */,
 				AD41A15C21CC6603004FED30 /* HomeViewController.swift in Sources */,
+				AD41A16A21D0D95E004FED30 /* GuestViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

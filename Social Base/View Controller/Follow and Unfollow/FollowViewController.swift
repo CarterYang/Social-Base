@@ -41,6 +41,15 @@ class FollowViewController: UITableViewController {
             return
         }
         
+        tableView.reloadData()
+        
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: GuestVC返回刷新页面
+    /////////////////////////////////////////////////////////////////////////////////
+    override func viewWillAppear(_ animated: Bool) {
+        self.tableView.reloadData()
     }
 
 //    override func numberOfSections(in tableView: UITableView) -> Int {
@@ -99,10 +108,29 @@ class FollowViewController: UITableViewController {
     }
 
     /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 当选中对象时调用
+    /////////////////////////////////////////////////////////////////////////////////
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //通过indexPath获取用户所单击的单元格内的用户
+        let cell = tableView.cellForRow(at: indexPath) as! FollowCell
+        
+        //单击单元格，进入HomeVC或者GuestVC
+        if cell.usernameLabel.text == AVUser.current()?.username {
+            let home = storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeViewController
+            self.navigationController?.pushViewController(home, animated: true)
+        }
+        else {
+            guestArray.append(followArray[indexPath.row])
+            let guest = storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
+            self.navigationController?.pushViewController(guest, animated: true)
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
     // MARK: 载入Followers信息
     /////////////////////////////////////////////////////////////////////////////////
     func loadFollowers() {
-        AVUser.current()?.getFollowers({ (followers: [Any]?, error: Error?) in
+        guestArray.last?.getFollowers({ (followers: [Any]?, error: Error?) in
             if error == nil && followers != nil {
                 self.followArray = followers! as! [AVUser]
                 //刷新，否则Array中的值为零，因为一直在后台运行
@@ -118,7 +146,7 @@ class FollowViewController: UITableViewController {
     // MARK: 载入Followings信息
     /////////////////////////////////////////////////////////////////////////////////
     func loadFollowings() {
-        AVUser.current()?.getFollowees({ (followings: [Any]?, error: Error?) in
+        guestArray.last?.getFollowees({ (followings: [Any]?, error: Error?) in
             if error == nil && followings != nil {
                 self.followArray = followings! as! [AVUser]
                 //刷新，否则Array中的值为零，因为一直在后台运行
