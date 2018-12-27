@@ -27,8 +27,7 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         super.viewDidLoad()
         
         //滚动视图的窗口尺寸
-        scrollView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width
-            , height: self.view.frame.height)
+        scrollView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
         //定义滚动视图的内容视图尺寸与窗口尺寸一样
         scrollView.contentSize.height = self.view.frame.height
         scrollViewHeight = self.view.frame.height
@@ -77,7 +76,7 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         }
         //当虚拟键盘出现以后，以动画的形式将”scroll view 的实际高度“缩小为”屏幕高度“ - “键盘高度”
         UIView.animate(withDuration: 0.4) {
-            self.scrollView.frame.size.height = self.scrollViewHeight - self.keyboard.size.height
+            self.scrollView.frame.size.height = self.scrollViewHeight - self.keyboard.size.height / 2
         }
     }
     
@@ -127,30 +126,49 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
         //隐藏Keyboard
         self.view.endEditing(true)
         
+        //当用户名已存在时提示警告信息
+        let query = AVQuery(className: "_User")
+        query.whereKey("username", equalTo: usernameTextField.text!)
+        query.countObjectsInBackground { (count: Int, error: Error?) in
+            if error == nil {
+                print("看这里 \(count)")
+                if count != 0 {
+                    let alert = UIAlertController(title: "错误", message: "用户名已存在", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+            }
+            else {
+                print (error?.localizedDescription)
+            }
+        }
+        
         //当信息不完全时提示警告信息
         if usernameTextField.text!.isEmpty || emailTextField.text!.isEmpty || passwordTextField.text!.isEmpty || repeatPasswordTextField.text!.isEmpty {
-            
+
             //弹出对话框
             let alert = UIAlertController(title: "Attention", message: "Please fill infomation", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(ok)
             self.present(alert, animated: true, completion: nil)
-            
+
             return
         }
-        
+
         //判断两次密码输入是否一样
         if passwordTextField.text != repeatPasswordTextField.text {
-            
+
             //弹出对话框
             let alert = UIAlertController(title: "Attention", message: "Password not same", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alert.addAction(ok)
             self.present(alert, animated: true, completion: nil)
-            
+
             return
         }
-        
+
         //发送基本数据到服务器
         let user = AVUser()
         user.username = usernameTextField.text
@@ -174,7 +192,7 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
                         //记住用户
                         UserDefaults.standard.set(user.username, forKey: "username")
                         UserDefaults.standard.synchronize()
-                        
+
                         //从AppDelegate.swift中调用login方法，让用户直接进入主界面
                         let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
                         appDelegate.login()

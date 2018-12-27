@@ -39,6 +39,13 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         //载入用户的posts
         loadPosts()
     }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: GuestVC返回刷新页面
+    /////////////////////////////////////////////////////////////////////////////////
+    override func viewWillAppear(_ animated: Bool) {
+        self.collectionView.reloadData()
+    }
 
 //    override func numberOfSections(in collectionView: UICollectionView) -> Int {
 //        return 0
