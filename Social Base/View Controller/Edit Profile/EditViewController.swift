@@ -174,16 +174,13 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     // MARK: 保存方法
     /////////////////////////////////////////////////////////////////////////////////
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
+        
         if !validateEmail(email: emailTextField.text!) {
             alert(error: "Email地址错误", message: "请输入正确的电子邮箱地址！")
             return
         }
         
-        
-
-        //更新信息至服务器
         let user = AVUser.current()
-        //user?.username = usernameTextField.text
         user?["displayName"] = displayNameTextField.text
         user?["bio"] = bioTextField.text
         user?.email = emailTextField.text?.lowercased()
@@ -240,7 +237,7 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     }
     
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 警告消息发放
+    // MARK: 警告消息方法
     /////////////////////////////////////////////////////////////////////////////////
     func alert (error: String, message: String) {
         let alert = UIAlertController(title: error, message: message, preferredStyle: .alert)

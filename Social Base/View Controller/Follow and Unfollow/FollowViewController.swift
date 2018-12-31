@@ -76,7 +76,7 @@ class FollowViewController: UITableViewController {
                 cell.profileImage.image = UIImage(data: data!)
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "下载头像出错！")
             }
         }
         
@@ -137,7 +137,7 @@ class FollowViewController: UITableViewController {
                 self.tableView.reloadData()
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "无法载入关注者信息！")
             }
         })
     }
@@ -153,7 +153,7 @@ class FollowViewController: UITableViewController {
                 self.tableView.reloadData()
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "无法载入关注信息！")
             }
         })
     }

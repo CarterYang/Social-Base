@@ -53,7 +53,7 @@ class ResetPasswordViewController: UIViewController {
                 return
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "重设密码出错！")
             }
         }
     }

@@ -36,6 +36,9 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         //设置CollectionView的背景色为白色
         self.collectionView.backgroundColor = .white
         
+        //接受UploadVC发来的上传成功的Notification，用来刷新CollectionView的帖子
+        NotificationCenter.default.addObserver(self, selector: #selector(uploaded), name: NSNotification.Name(rawValue: "uploaded"), object: nil)
+        
         //载入用户的posts
         loadPosts()
     }
@@ -98,7 +101,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
                 cell.cellImage.image = UIImage(data: data!)
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "无法从PictureArray中提取图片！")
             }
         }
 
@@ -184,6 +187,17 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     }
     
     /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击图片进入PostVC
+    /////////////////////////////////////////////////////////////////////////////////
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //发送postId到PostViewController中的postId数组中
+        postId.append(postIdArray[indexPath.row])
+        //将页面转到PostViewController
+        let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC") as! PostViewController
+        self.navigationController?.pushViewController(postVC, animated: true)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
     // MARK: 刷新页面方法
     /////////////////////////////////////////////////////////////////////////////////
     @objc func refresh() {
@@ -197,7 +211,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     /////////////////////////////////////////////////////////////////////////////////
     func loadPosts() {
         let query = AVQuery(className: "Posts")
-        query.whereKey("username", equalTo: AVUser.current()?.username)
+        query.whereKey("username", equalTo: AVUser.current()!.username!)  //注意：这里有改动current()？.username
         query.limit = postPerPage
         query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
             if error == nil {
@@ -214,7 +228,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
                 self.collectionView.reloadData()
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "对象查找错误！")
             }
         }
     }
@@ -254,6 +268,53 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         followings.show = "Followings"
         
         self.navigationController?.pushViewController(followings, animated: true)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 上传成功后重新载入帖子
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func uploaded() {
+        loadPosts()
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: CollectionView下拉加载更多帖子
+    /////////////////////////////////////////////////////////////////////////////////
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >= scrollView.contentSize.height - self.view.frame.height {
+            self.loadMorePosts()
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 加载更多帖子方法
+    /////////////////////////////////////////////////////////////////////////////////
+    func loadMorePosts() {
+        if postPerPage <= pictureArray.count {
+            postPerPage = postPerPage + 12
+            
+            let query = AVQuery(className: "Posts")
+            query.whereKey("username", equalTo: AVUser.current()!.username!)  //注意：这里有改动current()？.username
+            query.limit = postPerPage
+            query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    //如果查询成功，清空两个Array
+                    self.postIdArray.removeAll(keepingCapacity: false)
+                    self.pictureArray.removeAll(keepingCapacity: false)
+                    
+                    for object in objects! {
+                        //将查询到的数据x添加到数组中
+                        self.postIdArray.append((object as AnyObject).value(forKey: "postId") as! String)
+                        self.pictureArray.append((object as AnyObject).value(forKey: "picture") as! AVFile)
+                    }
+                    print("loaded + \(self.postPerPage)")
+                    self.collectionView.reloadData()
+                }
+                else {
+                    print(error?.localizedDescription ?? "对象查找错误！")
+                }
+            }
+        }
     }
     
     /////////////////////////////////////////////////////////////////////////////////

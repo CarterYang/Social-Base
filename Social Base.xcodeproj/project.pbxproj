@@ -22,6 +22,14 @@
 		AD83F8E421C777A700EFAB16 /* RootPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F8E321C777A700EFAB16 /* RootPageViewController.swift */; };
 		AD83F8F221C8FB3B00EFAB16 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F8F121C8FB3B00EFAB16 /* LogInViewController.swift */; };
 		AD83F8F521CBF1F500EFAB16 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F8F321C8FB5100EFAB16 /* SignUpViewController.swift */; };
+		ADFC86CC21D60B380015A8E3 /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86CB21D60B380015A8E3 /* UploadViewController.swift */; };
+		ADFC86CF21D684800015A8E3 /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86CE21D684800015A8E3 /* PostViewController.swift */; };
+		ADFC86D221D684AA0015A8E3 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86D121D684AA0015A8E3 /* PostCell.swift */; };
+		ADFC86D421D9CC1D0015A8E3 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86D321D9CC1D0015A8E3 /* NavigationViewController.swift */; };
+		ADFC86D721D9CC600015A8E3 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86D621D9CC5F0015A8E3 /* TabBarViewController.swift */; };
+		ADFC86D921D9D4EB0015A8E3 /* Placeholder-image.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFC86D821D9D4EB0015A8E3 /* Placeholder-image.png */; };
+		ADFC86DB21DA35AB0015A8E3 /* like.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFC86DA21DA35AB0015A8E3 /* like.png */; };
+		ADFC86DD21DA35C50015A8E3 /* likeSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFC86DC21DA35C50015A8E3 /* likeSelected.png */; };
 		B33EAC4FD53D16F92C56E8CB /* Pods_Social_Base.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AF73D047DF43D153187E0A /* Pods_Social_Base.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +54,14 @@
 		AD83F8E321C777A700EFAB16 /* RootPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootPageViewController.swift; sourceTree = "<group>"; };
 		AD83F8F121C8FB3B00EFAB16 /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		AD83F8F321C8FB5100EFAB16 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		ADFC86CB21D60B380015A8E3 /* UploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadViewController.swift; sourceTree = "<group>"; };
+		ADFC86CE21D684800015A8E3 /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		ADFC86D121D684AA0015A8E3 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		ADFC86D321D9CC1D0015A8E3 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
+		ADFC86D621D9CC5F0015A8E3 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		ADFC86D821D9D4EB0015A8E3 /* Placeholder-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Placeholder-image.png"; path = "Social Base/Assets.xcassets/placeholder-photo.imageset/Placeholder-image.png"; sourceTree = SOURCE_ROOT; };
+		ADFC86DA21DA35AB0015A8E3 /* like.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = like.png; path = "Social Base/Assets.xcassets/like.imageset/like.png"; sourceTree = SOURCE_ROOT; };
+		ADFC86DC21DA35C50015A8E3 /* likeSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = likeSelected.png; path = "Social Base/Assets.xcassets/likeSelected.imageset/likeSelected.png"; sourceTree = SOURCE_ROOT; };
 		FFBFF475B98B9178B954DABD /* Pods-Social Base.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Social Base.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Social Base/Pods-Social Base.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,8 +188,40 @@
 				AD41A16E21D38362004FED30 /* Edit Profile */,
 				AD41A16821D0D8EF004FED30 /* Follow and Unfollow */,
 				AD41A16B21D0D965004FED30 /* Guest */,
+				ADFC86CD21D60B3F0015A8E3 /* Upload */,
+				ADFC86D021D684890015A8E3 /* Post Viewer */,
+				ADFC86D521D9CC260015A8E3 /* Navigation & TabBar */,
 			);
 			path = "View Controller";
+			sourceTree = "<group>";
+		};
+		ADFC86CD21D60B3F0015A8E3 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				ADFC86CB21D60B380015A8E3 /* UploadViewController.swift */,
+				ADFC86D821D9D4EB0015A8E3 /* Placeholder-image.png */,
+			);
+			path = Upload;
+			sourceTree = "<group>";
+		};
+		ADFC86D021D684890015A8E3 /* Post Viewer */ = {
+			isa = PBXGroup;
+			children = (
+				ADFC86CE21D684800015A8E3 /* PostViewController.swift */,
+				ADFC86D121D684AA0015A8E3 /* PostCell.swift */,
+				ADFC86DA21DA35AB0015A8E3 /* like.png */,
+				ADFC86DC21DA35C50015A8E3 /* likeSelected.png */,
+			);
+			path = "Post Viewer";
+			sourceTree = "<group>";
+		};
+		ADFC86D521D9CC260015A8E3 /* Navigation & TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				ADFC86D321D9CC1D0015A8E3 /* NavigationViewController.swift */,
+				ADFC86D621D9CC5F0015A8E3 /* TabBarViewController.swift */,
+			);
+			path = "Navigation & TabBar";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,8 +286,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD83F8DC21C773C000EFAB16 /* LaunchScreen.storyboard in Resources */,
+				ADFC86DB21DA35AB0015A8E3 /* like.png in Resources */,
 				AD83F8D921C773C000EFAB16 /* Assets.xcassets in Resources */,
 				AD83F8D721C773BE00EFAB16 /* Main.storyboard in Resources */,
+				ADFC86D921D9D4EB0015A8E3 /* Placeholder-image.png in Resources */,
+				ADFC86DD21DA35C50015A8E3 /* likeSelected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,18 +356,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADFC86CC21D60B380015A8E3 /* UploadViewController.swift in Sources */,
 				AD41A16321CF992B004FED30 /* FollowViewController.swift in Sources */,
+				ADFC86CF21D684800015A8E3 /* PostViewController.swift in Sources */,
 				AD41A16521CF996A004FED30 /* FollowCell.swift in Sources */,
 				AD41A16021CC6B6E004FED30 /* PictureCell.swift in Sources */,
 				AD83F8E421C777A700EFAB16 /* RootPageViewController.swift in Sources */,
 				AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */,
 				AD41A15A21CC3066004FED30 /* ResetPasswordViewController.swift in Sources */,
+				ADFC86D421D9CC1D0015A8E3 /* NavigationViewController.swift in Sources */,
+				ADFC86D721D9CC600015A8E3 /* TabBarViewController.swift in Sources */,
 				AD83F8F521CBF1F500EFAB16 /* SignUpViewController.swift in Sources */,
 				AD83F8F221C8FB3B00EFAB16 /* LogInViewController.swift in Sources */,
 				AD41A16D21D38357004FED30 /* EditViewController.swift in Sources */,
 				AD41A15E21CC665E004FED30 /* HomeHeaderView.swift in Sources */,
 				AD41A15C21CC6603004FED30 /* HomeViewController.swift in Sources */,
 				AD41A16A21D0D95E004FED30 /* GuestViewController.swift in Sources */,
+				ADFC86D221D684AA0015A8E3 /* PostCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

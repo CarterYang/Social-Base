@@ -54,8 +54,23 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
     // MARK: 设置单元格布局
     /////////////////////////////////////////////////////////////////////////////////
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = CGSize(width: self.view.frame.width / 3, height: self.view.frame.width / 3)
+        let size = CGSize(width: (self.view.frame.width - 2) / 3, height: (self.view.frame.width - 2) / 3)
         return size
+    }
+    
+    //    //该方法是用来设置 CollectionViewCell 四周的边距
+    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    //        return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+    //    }
+    //
+    //该方法是用来设置同一行 CollectionViewCell 之间的间距
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    
+    //该方法是用来设置同一列 CollectionViewCell 之间的间距
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
     }
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +113,7 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
         
         //Step 1: 载入访客的基本数据信息
         let infoQuery = AVQuery(className: "_User")
-        infoQuery.whereKey("username", equalTo: guestArray.last?.username)
+        infoQuery.whereKey("username", equalTo: guestArray.last!.username!)            //注意：这里有改动last?.username
         infoQuery.findObjectsInBackground { (objects: [Any]?, error: Error?) in
             if error == nil {
                 
@@ -155,7 +170,7 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
         //Step 3: 设置统计数据
         //查找Post个数
         let postCount = AVQuery(className: "Posts")
-        postCount.whereKey("username", equalTo: guestArray.last?.username)
+        postCount.whereKey("username", equalTo: guestArray.last!.username!)   //注意：这里有改动last?.username
         postCount.countObjectsInBackground { (count: Int, error: Error?) in
             if error == nil {
                 header.posts.text = String(count)
@@ -164,7 +179,7 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
         
         //查找Follower个数
         let followersCount = AVQuery(className: "_Follower")
-        followersCount.whereKey("user", equalTo: guestArray.last)
+        followersCount.whereKey("user", equalTo: guestArray.last!)           //注意：这里有改动guestArray.last
         followersCount.countObjectsInBackground { (count: Int, error: Error?) in
             if error == nil {
                 header.followers.text = String(count)
@@ -173,7 +188,7 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
         
         //查找Following个数
         let followingsCount = AVQuery(className: "_Followee")
-        followingsCount.whereKey("user", equalTo: guestArray.last)
+        followingsCount.whereKey("user", equalTo: guestArray.last!)         //注意：这里有改动guestArray.last
         followingsCount.countObjectsInBackground { (count: Int, error: Error?) in
             if error == nil {
                 header.followings.text = String(count)
@@ -203,11 +218,22 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
     }
     
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 从云端获取访客的x帖子信息
+    // MARK: 点击图片进入PostVC
+    /////////////////////////////////////////////////////////////////////////////////
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //发送postId到PostViewController中的postId数组中
+        postId.append(postIdArray[indexPath.row])
+        //将页面转到PostViewController
+        let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC") as! PostViewController
+        self.navigationController?.pushViewController(postVC, animated: true)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 从云端获取访客的帖子信息
     /////////////////////////////////////////////////////////////////////////////////
     func loadPosts() {
         let query = AVQuery(className: "Posts")
-        query.whereKey("username", equalTo: guestArray.last?.username)
+        query.whereKey("username", equalTo: guestArray.last!.username!)             //注意：这里有改动last?.username
         query.limit = postPerPage
         query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
             //查询成功
@@ -225,7 +251,7 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
                 self.collectionView.reloadData()
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "无法获取访客帖子信息！")
             }
         }
     }

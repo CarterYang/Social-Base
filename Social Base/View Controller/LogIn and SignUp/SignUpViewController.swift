@@ -133,7 +133,7 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
             if error == nil {
                 print("看这里 \(count)")
                 if count != 0 {
-                    let alert = UIAlertController(title: "错误", message: "用户名已存在", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "错误", message: "用户名已存在，请更换用户名！", preferredStyle: .alert)
                     let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
                     alert.addAction(ok)
                     self.present(alert, animated: true, completion: nil)
@@ -141,31 +141,25 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
                 }
             }
             else {
-                print (error?.localizedDescription)
+                print (error?.localizedDescription ?? "用户名检索发送错误")
             }
+        }
+        
+        //检查Email地址有效性
+        if !validateEmail(email: emailTextField.text!) {
+            alert(error: "Email地址错误", message: "电子邮箱地址格式错误，请重新输入！")
+            return
         }
         
         //当信息不完全时提示警告信息
         if usernameTextField.text!.isEmpty || emailTextField.text!.isEmpty || passwordTextField.text!.isEmpty || repeatPasswordTextField.text!.isEmpty {
-
-            //弹出对话框
-            let alert = UIAlertController(title: "Attention", message: "Please fill infomation", preferredStyle: .alert)
-            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-            alert.addAction(ok)
-            self.present(alert, animated: true, completion: nil)
-
+            alert(error: "注意", message: "信息不完整，请重新填写！")
             return
         }
 
         //判断两次密码输入是否一样
         if passwordTextField.text != repeatPasswordTextField.text {
-
-            //弹出对话框
-            let alert = UIAlertController(title: "Attention", message: "Password not same", preferredStyle: .alert)
-            let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-            alert.addAction(ok)
-            self.present(alert, animated: true, completion: nil)
-
+            alert(error: "注意", message: "两次输入的密码不同，请重新输入！")
             return
         }
 
@@ -200,9 +194,35 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
                 }
             }
             else {
-                print(error?.localizedDescription)
+                print(error?.localizedDescription ?? "注册发生错误！")
             }
         }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 检查Email有效性
+    /////////////////////////////////////////////////////////////////////////////////
+    func validateEmail(email: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 检查PhoneNumber有效性
+    /////////////////////////////////////////////////////////////////////////////////
+    func validatePhone(phone: String) -> Bool {
+        let phoneRegex = "0?(13|14|15|18)[0-9]{9}"
+        return NSPredicate(format: "SELF MATCHES %@", phoneRegex).evaluate(with: phone)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 警告消息方法
+    /////////////////////////////////////////////////////////////////////////////////
+    func alert (error: String, message: String) {
+        let alert = UIAlertController(title: error, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
     }
     
     /////////////////////////////////////////////////////////////////////////////////

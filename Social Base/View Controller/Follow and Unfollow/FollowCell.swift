@@ -58,7 +58,7 @@ class FollowCell: UITableViewCell {
                     self.followButton.backgroundColor = self.hexStringToUIColor(hex: "#26BAEE")
                 }
                 else {
-                    print(error?.localizedDescription)
+                    print(error?.localizedDescription ?? "无法更改关注状态！")
                 }
             })
         }
@@ -71,7 +71,7 @@ class FollowCell: UITableViewCell {
                     self.followButton.backgroundColor = .lightGray
                 }
                 else {
-                    print(error?.localizedDescription)
+                    print(error?.localizedDescription ?? "无法更改关注状态！")
                 }
             })
         }
