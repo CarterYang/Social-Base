@@ -993,6 +993,9 @@
                                 <rect key="frame" x="359" y="674" width="35" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="发 送"/>
+                                <connections>
+                                    <action selector="sendButtonPressed:" destination="d5i-if-r6f" eventType="touchUpInside" id="hHw-jR-V1o"/>
+                                </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="1NY-La-RYa">
                                 <rect key="frame" x="12" y="663" width="321" height="53"/>

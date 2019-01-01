@@ -6,7 +6,8 @@ import AVOSCloudCrashReporting
 var commentId = [String]()
 var commentOwner = [String]()
 
-class CommentViewController: UIViewController {
+class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource {
+    
     
     @IBOutlet weak var commentTextField: UITextView!
     @IBOutlet weak var tableView: UITableView!
@@ -20,6 +21,14 @@ class CommentViewController: UIViewController {
     var commentHeight: CGFloat = 0           //用于记录评论输入框的高度
     
     var keyboard = CGRect()                  //用来记录keyboard的大小
+    
+    //云端信息储存数组
+    var usernameArray = [String]()
+    var profileImageArray = [AVFile]()
+    var commentArray = [String]()
+    var dateArray = [Date]()
+    
+    var page : Int = 15
     
     /////////////////////////////////////////////////////////////////////////////////
     // MARK: 屏幕初始化
@@ -55,6 +64,8 @@ class CommentViewController: UIViewController {
         //self.tableView.backgroundColor = .red
         
         alignment()
+        
+        loadComments()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -69,6 +80,149 @@ class CommentViewController: UIViewController {
         self.tabBarController?.tabBar.isHidden = false
     }
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 设定Table
+    /////////////////////////////////////////////////////////////////////////////////
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return commentArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentCell
+        
+        cell.usernameButton.setTitle(usernameArray[indexPath.row], for: .normal)
+        cell.usernameButton.sizeToFit()
+        cell.commentLabel.text = commentArray[indexPath.row]
+        profileImageArray[indexPath.row].getDataInBackground { (data: Data?, error: Error?) in
+            cell.profileImage.image = UIImage(data: data!)
+        }
+        
+        //配置时间
+        let from = dateArray[indexPath.row]
+        let now = Date()
+        let components : Set<Calendar.Component> = [.second, .minute, .hour, .day, .weekOfMonth]
+        let difference = Calendar.current.dateComponents(components, from: from, to: now)
+        
+        if difference.second! <= 0 {
+            cell.dateLabel.text = "现在"
+        }
+        
+        if difference.second! > 0 && difference.minute! <= 0 {
+            cell.dateLabel.text = "\(difference.second!)秒"
+        }
+        
+        if difference.minute! > 0 && difference.hour! <= 0 {
+            cell.dateLabel.text = "\(difference.minute!)分"
+        }
+        
+        if difference.hour! > 0 && difference.day! <= 0 {
+            cell.dateLabel.text = "\(difference.hour!)小时"
+        }
+        
+        if difference.day! > 0 && difference.weekOfMonth! <= 0 {
+            cell.dateLabel.text = "\(difference.day!)天"
+        }
+        
+        if difference.weekOfMonth! > 0 {
+            cell.dateLabel.text = "\(difference.weekOfMonth!)周"
+        }
+        
+        return cell
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 加载Comments
+    /////////////////////////////////////////////////////////////////////////////////
+    func loadComments() {
+        //Step 1: 合计所有评论的数量
+        let countQuery = AVQuery(className: "Comments")
+        countQuery.whereKey("to", equalTo: commentId.last!)
+        countQuery.countObjectsInBackground { (count: Int, error: Error?) in
+            //如果数量大于page数，refresher要起作用
+            if self.page < count {
+                self.refresher.addTarget(self, action: #selector(self.loadMore), for: .valueChanged)
+                self.tableView.addSubview(self.refresher)
+            }
+            
+            //Step 2: 获取最新的self.page数量的评论
+            let query = AVQuery(className: "Comments")
+            query.whereKey("to", equalTo: commentId.last!)
+            query.skip = count - self.page
+            query.addAscendingOrder("createdAt")
+            query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    //清空数组
+                    self.usernameArray.removeAll(keepingCapacity: false)
+                    self.commentArray.removeAll(keepingCapacity: false)
+                    self.profileImageArray.removeAll(keepingCapacity: false)
+                    self.dateArray.removeAll(keepingCapacity: false)
+                    
+                    for object in objects! {
+                        self.usernameArray.append((object as AnyObject).object(forKey: "username") as! String)
+                        self.profileImageArray.append((object as AnyObject).object(forKey: "profileImage") as! AVFile)
+                        self.commentArray.append((object as AnyObject).object(forKey: "comment") as! String)
+                        self.dateArray.append((object as AnyObject).createAt!)
+                        
+                        self.tableView.reloadData()
+                        self.tableView.scrollToRow(at: IndexPath(row: self.commentArray.count - 1, section: 0), at: .bottom, animated: false)
+                    }
+                }
+                else {
+                    print(error?.localizedDescription ?? "无法加载相关评论")
+                }
+            })
+        }
+    }
+    
+    @objc func loadMore() {
+        //Step 1: 合计所有的评论数量
+        let countQuery = AVQuery(className: "Comments")
+        countQuery.whereKey("to", equalTo: commentId.last!)
+        countQuery.countObjectsInBackground { (count: Int, error: Error?) in
+            //让refresher停止刷新动画
+            self.refresher.endRefreshing()
+            
+            if self.page >= count {
+                self.refresher.removeFromSuperview()
+            }
+            
+            //Step 2: 载入更多的评论
+            if self.page < count {
+                self.page = self.page + 15
+                
+                //从云端查询page个记录
+                let query = AVQuery(className: "Comments")
+                query.whereKey("to", equalTo: commentId.last!)
+                query.skip = count - self.page
+                query.addAscendingOrder("createdAt")
+                query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                    if error == nil {
+                        //清空数组
+                        self.usernameArray.removeAll(keepingCapacity: false)
+                        self.commentArray.removeAll(keepingCapacity: false)
+                        self.profileImageArray.removeAll(keepingCapacity: false)
+                        self.dateArray.removeAll(keepingCapacity: false)
+                        
+                        for object in objects! {
+                            self.usernameArray.append((object as AnyObject).object(forKey: "username") as! String)
+                            self.profileImageArray.append((object as AnyObject).object(forKey: "profileImage") as! AVFile)
+                            self.commentArray.append((object as AnyObject).object(forKey: "comment") as! String)
+                            self.dateArray.append((object as AnyObject).createAt!)
+                        }
+                        self.tableView.reloadData()
+                        //self.tableView.scrollToRow(at: IndexPath(row: self.commentArray.count - 1, section: 0), at: .bottom, animated: false)
+                    }
+                    else {
+                        print(error?.localizedDescription ?? "无法加载相关评论")
+                    }
+                })
+            }
+        }
+    }
     /////////////////////////////////////////////////////////////////////////////////
     // MARK: 虚拟键盘出现消失时对Scroll view的操作
     /////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +249,43 @@ class CommentViewController: UIViewController {
     
     @objc func hideKeyboardTap() {
         self.view.endEditing(true)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击输入框调用方法
+    /////////////////////////////////////////////////////////////////////////////////
+    func textViewDidChange(_ textView: UITextView) {
+        //如果没有输入信息则禁止发送按钮
+        let spacing = CharacterSet.whitespacesAndNewlines
+        if !commentTextField.text.trimmingCharacters(in: spacing).isEmpty {
+            sendButton.isEnabled = true
+        }
+        else {
+            sendButton.isEnabled = false
+        }
+        
+        //增加输入框高度
+        if textView.contentSize.height > textView.frame.height && textView.frame.height < 130 {
+            let difference = textView.contentSize.height - textView.frame.height
+            //调整输入框大小
+            textView.frame.origin.y = textView.frame.origin.y - difference
+            textView.frame.size.height = textView.contentSize.height
+            //将tableView的下边缘上移
+            if tableView.contentSize.height + keyboard.height + commentY >= tableView.frame.height {
+                tableView.frame.size.height = tableView.frame.size.height - difference
+            }
+        }
+        //减少输入框高度
+        else if textView.contentSize.height < textView.frame.height {
+            let difference = textView.frame.height - textView.contentSize.height
+            //调整输入框大小
+            textView.frame.origin.y = textView.frame.origin.y + difference
+            textView.frame.size.height = textView.contentSize.height
+            //将tableView的下边缘下移
+            if tableView.contentSize.height + keyboard.height + commentY >= tableView.frame.height {
+                tableView.frame.size.height = tableView.frame.size.height + difference
+            }
+        }
     }
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -135,5 +326,18 @@ class CommentViewController: UIViewController {
         tableViewHeight = tableView.frame.height
         commentHeight = commentTextField.frame.height
         commentY = commentTextField.frame.origin.y
+        
+        commentTextField.delegate = self
+        tableView.delegate = self
+        tableView.dataSource = self
+    }
+    
+    @IBAction func sendButtonPressed(_ sender: UIButton) {
+        //Step 1: 在表格视图中添加最新的评论
+        usernameArray.append(AVUser.current()!.username!)
+        profileImageArray.append(AVUser.current()?.object(forKey: "profileImage") as! AVFile)
+        dateArray.append(Date())
+        commentArray.append(commentTextField.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
+        tableView.reloadData()
     }
 }
