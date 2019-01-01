@@ -61,6 +61,9 @@ class PostViewController: UITableViewController {
             }
             self.tableView.reloadData()
         }
+        
+        //当收到like通知后，刷新页面
+        NotificationCenter.default.addObserver(self, selector: #selector(refresh), name: NSNotification.Name.init(rawValue: "liked"), object: nil)
     }
     
     
@@ -116,7 +119,7 @@ class PostViewController: UITableViewController {
             //cell.postImage.frame.size.height = (UIImage(data: data!)?.size.height)!
             //cell.postImage.sizeToFit()     //根据文字内容去调整自身大小
             
-            cell.postImage.sizeToFit()
+            //cell.postImage.sizeToFit()
             
             //self.tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
             //self.tableView.endUpdates()
@@ -174,7 +177,20 @@ class PostViewController: UITableViewController {
             cell.likeLabel.text = "\(count)"
         }
         
+        //将indexPath赋值给usernameButton的layer属性的自定义变量
+        cell.usernameButton.layer.setValue(indexPath, forKey: "index")
+        //将indexPath赋值给commentButton的layer属性的自定义变量
+        cell.commentButton.layer.setValue(indexPath, forKey: "index")
+        
+        
         return cell
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 刷新页面
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func refresh() {
+        self.tableView.reloadData()
     }
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -189,4 +205,45 @@ class PostViewController: UITableViewController {
         }
 //        postRatio = 1
     }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击UsernameButton方法
+    /////////////////////////////////////////////////////////////////////////////////
+    @IBAction func usernameButtonPressed(_ sender: UIButton) {
+        //按钮的index
+        let i = sender.layer.value(forKey: "index") as! IndexPath
+        
+        //通过 i 获取到用户所单击的单元格
+        let cell = tableView.cellForRow(at: i) as! PostCell
+        
+        //如果当前用户点击的是自己的Username，返回HomeVC，否则去GuestVC
+        if cell.usernameButton.titleLabel?.text == AVUser.current()!.username {
+            let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeViewController
+            self.navigationController?.pushViewController(home, animated: true)
+        }
+        else {
+            let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
+            self.navigationController?.pushViewController(guest, animated: true)
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击CommentButton方法
+    /////////////////////////////////////////////////////////////////////////////////
+    @IBAction func commentButtonPressed(_ sender: UIButton) {
+        //按钮的index
+        let i = sender.layer.value(forKey: "index") as! IndexPath
+        
+        //通过 i 获取到用户所单击的单元格
+        let cell = tableView.cellForRow(at: i) as! PostCell
+        
+        //发送相关数据到CommentVC中的全局变量
+        commentId.append(cell.postIdLabel.text!)
+        commentOwner.append(cell.usernameButton.titleLabel!.text!)
+        
+        //通过导航控制器到CommentVC
+        let comment = self.storyboard?.instantiateViewController(withIdentifier: "CommentVC") as! CommentViewController
+        self.navigationController?.pushViewController(comment, animated: true)
+    }
+    
 }

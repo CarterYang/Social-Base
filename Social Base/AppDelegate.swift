@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //跟踪应用打开情况
         //AVAnalytics.trackAppOpened(launchOptions: launchOptions)
         
+        window?.backgroundColor = .white
+        
         //如果有登录信息直接跳转页面
         login()
         

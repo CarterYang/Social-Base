@@ -30,6 +30,8 @@
 		ADFC86D921D9D4EB0015A8E3 /* Placeholder-image.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFC86D821D9D4EB0015A8E3 /* Placeholder-image.png */; };
 		ADFC86DB21DA35AB0015A8E3 /* like.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFC86DA21DA35AB0015A8E3 /* like.png */; };
 		ADFC86DD21DA35C50015A8E3 /* likeSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = ADFC86DC21DA35C50015A8E3 /* likeSelected.png */; };
+		ADFC86DF21DA78DB0015A8E3 /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86DE21DA78DB0015A8E3 /* CommentViewController.swift */; };
+		ADFC86E221DA793D0015A8E3 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFC86E121DA793D0015A8E3 /* CommentCell.swift */; };
 		B33EAC4FD53D16F92C56E8CB /* Pods_Social_Base.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AF73D047DF43D153187E0A /* Pods_Social_Base.framework */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +64,8 @@
 		ADFC86D821D9D4EB0015A8E3 /* Placeholder-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Placeholder-image.png"; path = "Social Base/Assets.xcassets/placeholder-photo.imageset/Placeholder-image.png"; sourceTree = SOURCE_ROOT; };
 		ADFC86DA21DA35AB0015A8E3 /* like.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = like.png; path = "Social Base/Assets.xcassets/like.imageset/like.png"; sourceTree = SOURCE_ROOT; };
 		ADFC86DC21DA35C50015A8E3 /* likeSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = likeSelected.png; path = "Social Base/Assets.xcassets/likeSelected.imageset/likeSelected.png"; sourceTree = SOURCE_ROOT; };
+		ADFC86DE21DA78DB0015A8E3 /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
+		ADFC86E121DA793D0015A8E3 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		FFBFF475B98B9178B954DABD /* Pods-Social Base.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Social Base.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Social Base/Pods-Social Base.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -190,6 +194,7 @@
 				AD41A16B21D0D965004FED30 /* Guest */,
 				ADFC86CD21D60B3F0015A8E3 /* Upload */,
 				ADFC86D021D684890015A8E3 /* Post Viewer */,
+				ADFC86E021DA78E90015A8E3 /* Comment */,
 				ADFC86D521D9CC260015A8E3 /* Navigation & TabBar */,
 			);
 			path = "View Controller";
@@ -222,6 +227,15 @@
 				ADFC86D621D9CC5F0015A8E3 /* TabBarViewController.swift */,
 			);
 			path = "Navigation & TabBar";
+			sourceTree = "<group>";
+		};
+		ADFC86E021DA78E90015A8E3 /* Comment */ = {
+			isa = PBXGroup;
+			children = (
+				ADFC86DE21DA78DB0015A8E3 /* CommentViewController.swift */,
+				ADFC86E121DA793D0015A8E3 /* CommentCell.swift */,
+			);
+			path = Comment;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -356,6 +370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADFC86E221DA793D0015A8E3 /* CommentCell.swift in Sources */,
 				ADFC86CC21D60B380015A8E3 /* UploadViewController.swift in Sources */,
 				AD41A16321CF992B004FED30 /* FollowViewController.swift in Sources */,
 				ADFC86CF21D684800015A8E3 /* PostViewController.swift in Sources */,
@@ -364,6 +379,7 @@
 				AD83F8E421C777A700EFAB16 /* RootPageViewController.swift in Sources */,
 				AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */,
 				AD41A15A21CC3066004FED30 /* ResetPasswordViewController.swift in Sources */,
+				ADFC86DF21DA78DB0015A8E3 /* CommentViewController.swift in Sources */,
 				ADFC86D421D9CC1D0015A8E3 /* NavigationViewController.swift in Sources */,
 				ADFC86D721D9CC600015A8E3 /* TabBarViewController.swift in Sources */,
 				AD83F8F521CBF1F500EFAB16 /* SignUpViewController.swift in Sources */,

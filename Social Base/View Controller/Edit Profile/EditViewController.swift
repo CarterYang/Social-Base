@@ -42,7 +42,7 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         sexPicker.showsSelectionIndicator = true
         sexTextField.inputView = sexPicker
         
-        //检测键盘出现或消失的状态，用NotificationCenter来实现
+        //检测键盘出现或消失的状态，用NotificationCenter来捕获消息
         NotificationCenter.default.addObserver(self, selector: #selector(showKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(hideKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
         

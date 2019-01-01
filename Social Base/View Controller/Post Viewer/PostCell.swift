@@ -16,6 +16,9 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var postIdLabel: UILabel!
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 屏幕初始化
+    /////////////////////////////////////////////////////////////////////////////////
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -57,8 +60,8 @@ class PostCell: UITableViewCell {
 
         //水平方向Constraint
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-10-[profileImage(30)]-10-[usernameButton]", options: [], metrics: nil, views: ["profileImage": profileImage, "usernameButton": usernameButton]))
-        //self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[postImage]-0-|", options: [], metrics: nil, views: ["postImage": postImage]))
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[postImage(\(width))]", options: [], metrics: nil, views: ["postImage": postImage]))
+        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[postImage]-0-|", options: [], metrics: nil, views: ["postImage": postImage]))
+        //self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[postImage(\(width))]", options: [], metrics: nil, views: ["postImage": postImage]))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[commentButton(25)]-15-[likeButton(25)]-5-[likeLabel]", options: [], metrics: nil, views: ["commentButton": commentButton, "likeButton": likeButton, "likeLabel": likeLabel]))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[moreButton(25)]-15-|", options: [], metrics: nil, views: ["moreButton": moreButton]))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[titleLabel]-15-|", options: [], metrics: nil, views: ["titleLabel": titleLabel]))
@@ -67,8 +70,100 @@ class PostCell: UITableViewCell {
         //改变profile image为圆形
         profileImage.layer.cornerRadius = profileImage.frame.width / 2
         profileImage.clipsToBounds = true //减掉多余的部分
+        
+        //将likeButton按钮的title文字颜色定位无色
+        likeButton.setTitleColor(.clear, for: .normal)
+        
+        //双击图片添加喜爱
+        let likeTap = UITapGestureRecognizer(target: self, action: #selector(likeTapped))
+        likeTap.numberOfTapsRequired = 2
+        postImage.isUserInteractionEnabled = true
+        postImage.addGestureRecognizer(likeTap)
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击LikeButton方法
+    /////////////////////////////////////////////////////////////////////////////////
+    @IBAction func likeButtonPressed(_ sender: UIButton) {
+        //获取LikeButton的Title
+        let title = sender.title(for: .normal)
+        //如果当前状态是Unlike，则点击后变为Like
+        if title == "unlike" {
+            let object = AVObject(className: "Likes")
+            object["by"] = AVUser.current()?.username
+            object["to"] = postIdLabel.text
+            object.saveInBackground { (success: Bool, error: Error?) in
+                if success {
+                    print("标记为：like！")
+                    self.likeButton.setTitle("like", for: .normal)
+                    self.likeButton.setBackgroundImage(UIImage(named: "likeSelected.png"), for: .normal)
+                    
+                    //如果设置为like，则发送通知给表格视图刷新表格
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)
+                }
+            }
+        }
+        //如果当前状态是Like，则点击后变为unLike
+        else {
+            //搜索Likes中对应记录
+            let query = AVQuery(className: "Likes")
+            query.whereKey("by", equalTo: AVUser.current()!.username!)
+            query.whereKey("to", equalTo: postIdLabel.text!)
+            query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
+                for object in objects! {
+                    //搜索到记录后将其从Likes中删除
+                    (object as AnyObject).deleteInBackground({ (success: Bool, error: Error?) in
+                        if success {
+                            print("删除Like记录，disliked")
+                            self.likeButton.setTitle("unlike", for: .normal)
+                            self.likeButton.setBackgroundImage(UIImage(named: "like.png"), for: .normal)
+                            
+                            //如果设置为unlike，则发送通知给表格视图刷新表格
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)
+                        }
+                    })
+                }
+            }
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 双击图片Like帖子
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func likeTapped() {
+        //创建一个大大的灰色桃心
+        let likePic = UIImageView(image: UIImage(named: "likeSelected.png"))
+        likePic.frame.size.width = postImage.frame.width / 1.5
+        likePic.frame.size.height = postImage.frame.height / 1.5
+        likePic.center = postImage.center
+        likePic.alpha = 0.8
+        self.addSubview(likePic)
+        //通过动画隐藏likePic并且让它变小
+        UIView.animate(withDuration: 0.4) {
+            likePic.alpha = 0
+            likePic.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        }
+        
+        //获取LikeButton的Title
+        let title = likeButton.title(for: .normal)
+        //如果当前状态是Unlike，则点击后变为Like
+        if title == "unlike" {
+            let object = AVObject(className: "Likes")
+            object["by"] = AVUser.current()?.username
+            object["to"] = postIdLabel.text
+            object.saveInBackground { (success: Bool, error: Error?) in
+                if success {
+                    print("标记为：like！")
+                    self.likeButton.setTitle("like", for: .normal)
+                    self.likeButton.setBackgroundImage(UIImage(named: "likeSelected.png"), for: .normal)
+                    
+                    //如果设置为like，则发送通知给表格视图刷新表格
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "liked"), object: nil)
+                }
+            }
+        }
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
