@@ -5,7 +5,6 @@ import AVOSCloudCrashReporting
 
 class CommentCell: UITableViewCell {
 
-    
     @IBOutlet weak var profileImage: UIImageView!
     @IBOutlet weak var usernameButton: UIButton!
     @IBOutlet weak var commentLabel: UILabel!
@@ -37,7 +36,7 @@ class CommentCell: UITableViewCell {
         profileImage.layer.cornerRadius = profileImage.frame.width / 2
         profileImage.clipsToBounds = true //减掉多余的部分
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

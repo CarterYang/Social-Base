@@ -2,6 +2,7 @@ import UIKit
 import AVOSCloud
 import AVOSCloudIM
 import AVOSCloudCrashReporting
+import SwipeCellKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

@@ -12,7 +12,6 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
     @IBOutlet weak var commentTextField: UITextView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sendButton: UIButton!
-
     
     var refresher = UIRefreshControl()
     
@@ -131,6 +130,8 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             cell.dateLabel.text = "\(difference.weekOfMonth!)周"
         }
         
+        cell.usernameButton.layer.setValue(indexPath, forKey: "index")          //为usernameButton添加一个属性变量
+        
         return cell
     }
     
@@ -165,7 +166,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
                         self.usernameArray.append((object as AnyObject).object(forKey: "username") as! String)
                         self.profileImageArray.append((object as AnyObject).object(forKey: "profileImage") as! AVFile)
                         self.commentArray.append((object as AnyObject).object(forKey: "comment") as! String)
-                        self.dateArray.append((object as AnyObject).createAt!)
+                        self.dateArray.append((object as AnyObject).createdAt!)
                         
                         self.tableView.reloadData()
                         self.tableView.scrollToRow(at: IndexPath(row: self.commentArray.count - 1, section: 0), at: .bottom, animated: false)
@@ -178,6 +179,9 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         }
     }
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 加载更多Comments
+    /////////////////////////////////////////////////////////////////////////////////
     @objc func loadMore() {
         //Step 1: 合计所有的评论数量
         let countQuery = AVQuery(className: "Comments")
@@ -211,7 +215,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
                             self.usernameArray.append((object as AnyObject).object(forKey: "username") as! String)
                             self.profileImageArray.append((object as AnyObject).object(forKey: "profileImage") as! AVFile)
                             self.commentArray.append((object as AnyObject).object(forKey: "comment") as! String)
-                            self.dateArray.append((object as AnyObject).createAt!)
+                            self.dateArray.append((object as AnyObject).createdAt!)
                         }
                         self.tableView.reloadData()
                         //self.tableView.scrollToRow(at: IndexPath(row: self.commentArray.count - 1, section: 0), at: .bottom, animated: false)
@@ -223,6 +227,104 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             }
         }
     }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 设置单元格可编辑
+    /////////////////////////////////////////////////////////////////////////////////
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        //获取用户所滑动的单元格对象
+        let cell = tableView.cellForRow(at: indexPath) as! CommentCell
+
+        //动作 1: 删除行为
+        let delete = UITableViewRowAction(style: .normal, title: "删除") { (action: UITableViewRowAction, indexPath: IndexPath) in
+            //Step 1: 从云端删除评论
+            let commentQuery = AVQuery(className: "Comments")
+            commentQuery.whereKey("to", equalTo: commentId.last!)
+            commentQuery.whereKey("comment", equalTo: cell.commentLabel.text!)
+            commentQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    //找到相关记录
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually()
+                    }
+                }
+                else {
+                    print(error?.localizedDescription ?? "无法删除评论")
+                }
+            })
+
+            //Step 2: 从TableView删除单元格
+            self.commentArray.remove(at: indexPath.row)
+            self.dateArray.remove(at: indexPath.row)
+            self.profileImageArray.remove(at: indexPath.row)
+            self.usernameArray.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
+
+            //Step 3: 关闭单元格的编辑状态
+            self.tableView.setEditing(false, animated: true)
+        }
+
+        //动作 2: Address
+        let address = UITableViewRowAction(style: .normal, title: " @ ") { (action: UITableViewRowAction, indexPath: IndexPath) in
+            //在TextView中加入Address
+            self.commentTextField.text = "\(self.commentTextField.text + "@" + self.usernameArray[indexPath.row] + " ")"
+            //让发送按钮生效
+            self.sendButton.isEnabled = true
+            //关闭单元格的编辑状态
+            self.tableView.setEditing(false, animated: true)
+        }
+
+        //动作 3: 投诉评论
+        let complain = UITableViewRowAction(style: .normal, title: "举报") { (action: UITableViewRowAction, indexPath: IndexPath) in
+            //发送投诉到云端
+            let complainObj = AVObject(className: "Complain")
+            complainObj["by"] = AVUser.current()?.username
+            complainObj["post"] = commentId.last
+            complainObj["to"] = cell.commentLabel.text
+            complainObj["owner"] = cell.usernameButton.titleLabel?.text
+            complainObj.saveInBackground({ (success: Bool, error: Error?) in
+                if success {
+                    self.alert(error: "举报信息已经提交！", message: "感谢您的支持，我们会关注您提交的举报！")
+                    print("举报已经处理")
+                }
+                else {
+                    //self.alert(error: "错误", message: error?.localizedDescription ?? "无法处理投诉")
+                    print(error?.localizedDescription ?? "无法处理投诉")
+                }
+            })
+
+            //Step 3: 关闭单元格的编辑状态
+            self.tableView.setEditing(false, animated: true)
+        }
+
+        //为按钮设置颜色
+        delete.backgroundColor = .red
+        address.backgroundColor = self.hexStringToUIColor(hex: "#4A4A48")
+        complain.backgroundColor = self.hexStringToUIColor(hex: "#4A4A48")
+
+        //为按钮设置图片(这里用图片来创建颜色)
+        //delete.backgroundColor = UIColor(patternImage: UIImage(named: "delete")!)
+        //address.backgroundColor = UIColor(patternImage: UIImage(named: "address")!)
+        //complain.backgroundColor = UIColor(patternImage: UIImage(named: "complain")!)
+
+        //根据情况加载按钮
+        if cell.usernameButton.titleLabel?.text == AVUser.current()?.username {
+            return [delete, address]                                //评论是自己的
+        }
+        else if commentOwner.last == AVUser.current()?.username {
+            return [delete, address, complain]                      //帖子是自己的
+        }
+        else {
+            return [address, complain]                              //评论是别人的
+        }
+    }
+
+    
+    
     /////////////////////////////////////////////////////////////////////////////////
     // MARK: 虚拟键盘出现消失时对Scroll view的操作
     /////////////////////////////////////////////////////////////////////////////////
@@ -332,6 +434,31 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         tableView.dataSource = self
     }
     
+    @IBAction func usernameButtonPressed(_ sender: UIButton) {
+        //获取按钮的index
+        let i = sender.layer.value(forKey: "index") as! IndexPath
+        //通过i获取到用户所单击的单元格
+        let cell = tableView.cellForRow(at: i) as! CommentCell
+        
+        //如果点击的是自己的Username，则调回HomeVC，否则进入GuestVC
+        if cell.usernameButton.titleLabel?.text == AVUser.current()?.username {
+            let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeViewController
+            self.navigationController?.pushViewController(home, animated: true)
+        }
+        else {
+            let query = AVUser.query()
+            query.whereKey("username", equalTo: cell.usernameButton.titleLabel!.text!)
+            query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
+                if let object = objects?.last {
+                    guestArray.append(object as! AVUser)
+                    
+                    let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
+                    self.navigationController?.pushViewController(guest, animated: true)
+                }
+            }
+        }
+    }
+    
     @IBAction func sendButtonPressed(_ sender: UIButton) {
         //Step 1: 在表格视图中添加最新的评论
         usernameArray.append(AVUser.current()!.username!)
@@ -339,5 +466,56 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         dateArray.append(Date())
         commentArray.append(commentTextField.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
         tableView.reloadData()
+        
+        //Step 2:发送评论到云端储存
+        let commentObj = AVObject(className: "Comments")
+        commentObj["to"] = commentId.last
+        commentObj["username"] = AVUser.current()?.username
+        commentObj["profileImage"] = AVUser.current()?.object(forKey: "profileImage")
+        commentObj["comment"] = commentTextField.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        commentObj.saveEventually()     //在后台线程提交数据到云端，但不一定是马上提交，而是由AVOSloud SDK决定什么时候提交，从而提高程序的性能和效率
+        //Scroll to bottom
+        self.tableView.scrollToRow(at: IndexPath(item: commentArray.count - 1, section: 0), at: .bottom, animated: false)
+        
+        //Step 3: 发送数据后重新设定视图表格
+        commentTextField.text = ""
+        commentTextField.frame.size.height = commentHeight
+        commentTextField.frame.origin.y = sendButton.frame.origin.y
+        tableView.frame.size.height = tableViewHeight - keyboard.height - commentTextField.frame.height + commentHeight
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 警告消息
+    /////////////////////////////////////////////////////////////////////////////////
+    func alert(error: String, message: String) {
+        let alert = UIAlertController(title: error, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 十六进制颜色转为UIColor
+    /////////////////////////////////////////////////////////////////////////////////
+    func hexStringToUIColor(hex:String) -> UIColor {
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+        
+        if ((cString.count) != 6) {
+            return UIColor.gray
+        }
+        
+        var rgbValue:UInt32 = 0
+        Scanner(string: cString).scanHexInt32(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
     }
 }

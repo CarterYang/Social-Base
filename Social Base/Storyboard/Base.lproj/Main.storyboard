@@ -942,16 +942,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ho0-lE-6J8">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ho0-lE-6J8">
                                 <rect key="frame" x="0.0" y="20" width="414" height="635"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="CommentCell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="60" id="THe-K2-AqI" userLabel="Cell" customClass="CommentCell" customModule="Social_Base" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="CommentCell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="60" id="THe-K2-AqI" userLabel="Cell" customClass="CommentCell" customModule="Social_Base" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="THe-K2-AqI" id="DeL-vg-1Ip">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="59.666666666666664"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="placeholderImg" translatesAutoresizingMaskIntoConstraints="NO" id="UAz-fE-ilf">
@@ -981,10 +981,10 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="commentLabel" destination="j9b-Xf-AfS" id="uow-TO-Sc7"/>
-                                            <outlet property="dateLabel" destination="Gge-22-Kw8" id="WzH-UP-Wrl"/>
-                                            <outlet property="profileImage" destination="UAz-fE-ilf" id="QM6-UG-Ofm"/>
-                                            <outlet property="usernameButton" destination="REn-WO-3Fn" id="H7s-tk-S0p"/>
+                                            <outlet property="commentLabel" destination="j9b-Xf-AfS" id="rQd-aq-sCm"/>
+                                            <outlet property="dateLabel" destination="Gge-22-Kw8" id="BTi-Ij-7Vg"/>
+                                            <outlet property="profileImage" destination="UAz-fE-ilf" id="pMe-ZT-Hqe"/>
+                                            <outlet property="usernameButton" destination="REn-WO-3Fn" id="GeV-sz-nWr"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1011,7 +1011,7 @@
                     <connections>
                         <outlet property="commentTextField" destination="1NY-La-RYa" id="zAx-NJ-lN2"/>
                         <outlet property="sendButton" destination="w42-xn-Ebe" id="PEt-pQ-odP"/>
-                        <outlet property="tableView" destination="ho0-lE-6J8" id="jgA-EN-VzC"/>
+                        <outlet property="tableView" destination="ho0-lE-6J8" id="S9i-8d-VKg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pOW-PL-pJV" userLabel="First Responder" sceneMemberID="firstResponder"/>
