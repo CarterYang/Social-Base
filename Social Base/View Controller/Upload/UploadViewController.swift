@@ -36,7 +36,6 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
         //removeButton.isHidden = true
         
         //让页面回到原始状态
-        //pictureField.image =
         pictureField.image = UIImage(named: "Placeholder-image.png")
         textField.text = ""
     }
@@ -131,7 +130,8 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
         let object = AVObject(className: "Posts")
         object["username"] = AVUser.current()?.username
         object["profileImage"] = AVUser.current()?.value(forKey: "profileImage") as! AVFile
-        object["postId"] = "\(AVUser.current()!.username! ) \(NSUUID().uuidString)"
+        let uuid = NSUUID().uuidString
+        object["postId"] = "\(AVUser.current()!.username! ) \(uuid)"
         
         if textField.text.isEmpty {
             object["postTitle"] = ""
@@ -143,6 +143,40 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
         let pictureData = UIImage.jpegData(pictureField.image!)(compressionQuality: 0.75)!
         let pictureFile = AVFile(name: "post.jpg", data: pictureData)
         object["picture"] = pictureFile
+        
+        //发送Hashtag到云端
+        let newTitle = textField.text.replacingOccurrences(of: "#", with: " #")
+        let words: [String] = newTitle.components(separatedBy: CharacterSet.whitespacesAndNewlines)
+        for var word in words {
+            let pattern = "#[^#]+"
+            let regular = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+            let results = regular.matches(in: word, options: .reportProgress, range: NSMakeRange(0, word.count))
+            
+            //输出截取结果
+            print("符合的结果有\(results.count)个")
+            for result in results {
+                word = (word as NSString).substring(with: result.range)
+            }
+            
+            if word.hasPrefix("#") {
+                word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)  //去除两端的标点
+                word = word.trimmingCharacters(in: CharacterSet.symbols)                //去除两端的符号
+                
+                let hashtagOBJ = AVObject(className: "Hashtags")
+                hashtagOBJ["to"] = "\(AVUser.current()!.username! ) \(uuid)"
+                hashtagOBJ["by"] = AVUser.current()?.username
+                hashtagOBJ["hashtag"] = word.lowercased()
+                hashtagOBJ["comment"] = textField.text
+                hashtagOBJ.saveInBackground { (success: Bool, error: Error?) in
+                    if success {
+                        print("hashtag \(word) 创建成功")
+                    }
+                    else {
+                        print(error?.localizedDescription ?? "无法创建hashtag")
+                    }
+                }
+            }
+        }
         
         //上传数据到服务器
         object.saveInBackground { (success: Bool, error: Error?) in

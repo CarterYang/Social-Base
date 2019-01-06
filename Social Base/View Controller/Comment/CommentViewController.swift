@@ -130,8 +130,49 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             cell.dateLabel.text = "\(difference.weekOfMonth!)周"
         }
         
-        cell.usernameButton.layer.setValue(indexPath, forKey: "index")          //为usernameButton添加一个属性变量
+        //当 @mentions 被点击
+        //当用户点击@连接后执行闭包代码，首先传递进三个参数：
+        //1. label代表用户所单击label对象
+        //2. handle代表所单击的@mention
+        //3. range是handle在label中的位置范围
+        cell.commentLabel.userHandleLinkTapHandler = {label, handle, rang in
+            var mention = handle
+            mention = String(mention.dropFirst())     //去掉首字符@
+            
+            if mention == AVUser.current()?.username {
+                let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeViewController
+                self.navigationController?.pushViewController(home, animated: true)
+            }
+            else {
+                let query = AVUser.query()
+                query.whereKey("username", equalTo: mention)
+                query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                    if let object = objects?.last {
+                        guestArray.append(object as! AVUser)
+                        let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
+                        self.navigationController?.pushViewController(guest, animated: true)
+                    }
+                })
+            }
+        }
         
+        //当 #hashtag 被点击
+        //当用户点击#连接后执行闭包代码，首先传递进三个参数：
+        //1. label代表用户所单击label文本
+        //2. handle代表所单击的#hashtag链接
+        //3. range是handle在label中的位置范围
+        cell.commentLabel.hashtagLinkTapHandler = {label, handle, rang in
+            var mention = handle
+            mention = String(mention.dropFirst())     //去掉首字符#
+            hashtag.append(mention.lowercased())      //将hashtag添加到全局数组hashtag中
+            
+            let hashVC = self.storyboard?.instantiateViewController(withIdentifier: "HashtagsVC") as! HashtagsViewController
+            self.navigationController?.pushViewController(hashVC, animated: true)
+        }
+        
+        //为usernameButton添加一个属性变量
+        cell.usernameButton.layer.setValue(indexPath, forKey: "index")
+
         return cell
     }
     
@@ -256,15 +297,28 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
                     print(error?.localizedDescription ?? "无法删除评论")
                 }
             })
+            
+            //Step 2: 从云端删除hashtag
+            let hashtagQuery = AVQuery(className: "Hashtags")
+            hashtagQuery.whereKey("to", equalTo: commentId.last!)
+            hashtagQuery.whereKey("by", equalTo: cell.usernameButton.titleLabel!.text!)
+            hashtagQuery.whereKey("comment", equalTo: cell.commentLabel.text!)
+            hashtagQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually()
+                    }
+                }
+            })
 
-            //Step 2: 从TableView删除单元格
+            //Step 3: 从TableView删除单元格
             self.commentArray.remove(at: indexPath.row)
             self.dateArray.remove(at: indexPath.row)
             self.profileImageArray.remove(at: indexPath.row)
             self.usernameArray.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .fade)
 
-            //Step 3: 关闭单元格的编辑状态
+            //Step 4: 关闭单元格的编辑状态
             self.tableView.setEditing(false, animated: true)
         }
 
@@ -434,6 +488,9 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         tableView.dataSource = self
     }
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击评论用户名
+    /////////////////////////////////////////////////////////////////////////////////
     @IBAction func usernameButtonPressed(_ sender: UIButton) {
         //获取按钮的index
         let i = sender.layer.value(forKey: "index") as! IndexPath
@@ -459,6 +516,9 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         }
     }
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击发送按钮
+    /////////////////////////////////////////////////////////////////////////////////
     @IBAction func sendButtonPressed(_ sender: UIButton) {
         //Step 1: 在表格视图中添加最新的评论
         usernameArray.append(AVUser.current()!.username!)
@@ -467,7 +527,7 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         commentArray.append(commentTextField.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
         tableView.reloadData()
         
-        //Step 2:发送评论到云端储存
+        //Step 2: 发送评论到云端储存
         let commentObj = AVObject(className: "Comments")
         commentObj["to"] = commentId.last
         commentObj["username"] = AVUser.current()?.username
@@ -477,7 +537,41 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         //Scroll to bottom
         self.tableView.scrollToRow(at: IndexPath(item: commentArray.count - 1, section: 0), at: .bottom, animated: false)
         
-        //Step 3: 发送数据后重新设定视图表格
+        //Step 3: 发送Hashtag到云端
+        let newTitle = commentTextField.text.replacingOccurrences(of: "#", with: " #")
+        let words: [String] = newTitle.components(separatedBy: CharacterSet.whitespacesAndNewlines)
+        for var word in words {
+            let pattern = "#[^#]+"
+            let regular = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+            let results = regular.matches(in: word, options: .reportProgress, range: NSMakeRange(0, word.count))
+            
+            //输出截取结果
+            print("符合的结果有\(results.count)个")
+            for result in results {
+                word = (word as NSString).substring(with: result.range)
+            }
+            
+            if word.hasPrefix("#") {
+                word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)  //去除两端的标点
+                word = word.trimmingCharacters(in: CharacterSet.symbols)                //去除两端的符号
+                
+                let hashtagOBJ = AVObject(className: "Hashtags")
+                hashtagOBJ["to"] = commentId.last
+                hashtagOBJ["by"] = AVUser.current()?.username
+                hashtagOBJ["hashtag"] = word.lowercased()
+                hashtagOBJ["comment"] = commentTextField.text
+                hashtagOBJ.saveInBackground { (success: Bool, error: Error?) in
+                    if success {
+                        print("hashtag \(word) 创建成功")
+                    }
+                    else {
+                        print(error?.localizedDescription ?? "无法创建hashtag")
+                    }
+                }
+            }
+        }
+        
+        //Step 4: 发送数据后重新设定视图表格
         commentTextField.text = ""
         commentTextField.frame.size.height = commentHeight
         commentTextField.frame.origin.y = sendButton.frame.origin.y

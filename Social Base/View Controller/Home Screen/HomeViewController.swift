@@ -201,7 +201,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     // MARK: 刷新页面方法
     /////////////////////////////////////////////////////////////////////////////////
     @objc func refresh() {
-        collectionView.reloadData()
+        self.collectionView.reloadData()
         //停止动画刷新
         refresher.endRefreshing()
     }
@@ -213,6 +213,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         let query = AVQuery(className: "Posts")
         query.whereKey("username", equalTo: AVUser.current()!.username!)  //注意：这里有改动current()？.username
         query.limit = postPerPage
+        query.addDescendingOrder("createdAt")
         query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
             if error == nil {
                 //如果查询成功，清空两个Array
@@ -226,6 +227,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
                 }
                 
                 self.collectionView.reloadData()
+                self.refresher.endRefreshing()
             }
             else {
                 print(error?.localizedDescription ?? "对象查找错误！")
@@ -278,7 +280,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     }
     
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: CollectionView下拉加载更多帖子
+    // MARK: 下拉加载更多帖子
     /////////////////////////////////////////////////////////////////////////////////
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y >= scrollView.contentSize.height - self.view.frame.height {
@@ -296,6 +298,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
             let query = AVQuery(className: "Posts")
             query.whereKey("username", equalTo: AVUser.current()!.username!)  //注意：这里有改动current()？.username
             query.limit = postPerPage
+            query.addDescendingOrder("createdAt")
             query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
                 if error == nil {
                     //如果查询成功，清空两个Array

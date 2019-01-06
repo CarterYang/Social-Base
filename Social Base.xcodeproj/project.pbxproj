@@ -15,6 +15,8 @@
 		AD41A16521CF996A004FED30 /* FollowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A16421CF996A004FED30 /* FollowCell.swift */; };
 		AD41A16A21D0D95E004FED30 /* GuestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A16921D0D95E004FED30 /* GuestViewController.swift */; };
 		AD41A16D21D38357004FED30 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A16C21D38357004FED30 /* EditViewController.swift */; };
+		AD764D1721E05C2E00917A96 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = AD764D1621E05C2E00917A96 /* KILabel.m */; };
+		AD764D1921E1BAA800917A96 /* HashtagsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD764D1821E1BAA800917A96 /* HashtagsViewController.swift */; };
 		AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */; };
 		AD83F8D721C773BE00EFAB16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD83F8D521C773BE00EFAB16 /* Main.storyboard */; };
 		AD83F8D921C773C000EFAB16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD83F8D821C773C000EFAB16 /* Assets.xcassets */; };
@@ -47,6 +49,9 @@
 		AD41A16421CF996A004FED30 /* FollowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCell.swift; sourceTree = "<group>"; };
 		AD41A16921D0D95E004FED30 /* GuestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestViewController.swift; sourceTree = "<group>"; };
 		AD41A16C21D38357004FED30 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
+		AD764D1521E05C2D00917A96 /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabel.h; sourceTree = "<group>"; };
+		AD764D1621E05C2E00917A96 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
+		AD764D1821E1BAA800917A96 /* HashtagsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagsViewController.swift; sourceTree = "<group>"; };
 		AD83F8CE21C773BE00EFAB16 /* Social Base.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Social Base.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD83F8D621C773BE00EFAB16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -143,6 +148,14 @@
 			path = "Edit Profile";
 			sourceTree = "<group>";
 		};
+		AD764D1A21E1BAB200917A96 /* Hashtags */ = {
+			isa = PBXGroup;
+			children = (
+				AD764D1821E1BAA800917A96 /* HashtagsViewController.swift */,
+			);
+			path = Hashtags;
+			sourceTree = "<group>";
+		};
 		AD83F8C521C773BE00EFAB16 = {
 			isa = PBXGroup;
 			children = (
@@ -166,6 +179,8 @@
 			children = (
 				AD83F8D121C773BE00EFAB16 /* AppDelegate.swift */,
 				AD83F8E321C777A700EFAB16 /* RootPageViewController.swift */,
+				AD764D1521E05C2D00917A96 /* KILabel.h */,
+				AD764D1621E05C2E00917A96 /* KILabel.m */,
 				AD83F8EE21C7FFB700EFAB16 /* View Controller */,
 				AD83F8D821C773C000EFAB16 /* Assets.xcassets */,
 				AD83F8DA21C773C000EFAB16 /* LaunchScreen.storyboard */,
@@ -196,6 +211,7 @@
 				ADFC86D021D684890015A8E3 /* Post Viewer */,
 				ADFC86E021DA78E90015A8E3 /* Comment */,
 				ADFC86D521D9CC260015A8E3 /* Navigation & TabBar */,
+				AD764D1A21E1BAB200917A96 /* Hashtags */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -380,7 +396,9 @@
 				AD41A16021CC6B6E004FED30 /* PictureCell.swift in Sources */,
 				AD83F8E421C777A700EFAB16 /* RootPageViewController.swift in Sources */,
 				AD83F8D221C773BE00EFAB16 /* AppDelegate.swift in Sources */,
+				AD764D1721E05C2E00917A96 /* KILabel.m in Sources */,
 				AD41A15A21CC3066004FED30 /* ResetPasswordViewController.swift in Sources */,
+				AD764D1921E1BAA800917A96 /* HashtagsViewController.swift in Sources */,
 				ADFC86DF21DA78DB0015A8E3 /* CommentViewController.swift in Sources */,
 				ADFC86D421D9CC1D0015A8E3 /* NavigationViewController.swift in Sources */,
 				ADFC86D721D9CC600015A8E3 /* TabBarViewController.swift in Sources */,

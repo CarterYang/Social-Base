@@ -177,6 +177,46 @@ class PostViewController: UITableViewController {
             cell.likeLabel.text = "\(count)"
         }
         
+        //当 @mentions 被点击
+        //当用户点击@连接后执行闭包代码，首先传递进三个参数：
+        //1. label代表用户所单击label对象
+        //2. handle代表所单击的@mention
+        //3. range是handle在label中的位置范围
+        cell.titleLabel.userHandleLinkTapHandler = {label, handle, rang in
+            var mention = handle
+            mention = String(mention.dropFirst())     //去掉首字符@
+            
+            if mention == AVUser.current()?.username {
+                let home = self.storyboard?.instantiateViewController(withIdentifier: "HomeVC") as! HomeViewController
+                self.navigationController?.pushViewController(home, animated: true)
+            }
+            else {
+                let query = AVUser.query()
+                query.whereKey("username", equalTo: mention)
+                query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                    if let object = objects?.last {
+                        guestArray.append(object as! AVUser)
+                        let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
+                        self.navigationController?.pushViewController(guest, animated: true)
+                    }
+                })
+            }
+        }
+        
+        //当 #hashtag 被点击
+        //当用户点击#连接后执行闭包代码，首先传递进三个参数：
+        //1. label代表用户所单击label文本
+        //2. handle代表所单击的#hashtag链接
+        //3. range是handle在label中的位置范围
+        cell.titleLabel.hashtagLinkTapHandler = {label, handle, rang in
+            var mention = handle
+            mention = String(mention.dropFirst())     //去掉首字符#
+            hashtag.append(mention.lowercased())      //将hashtag添加到全局数组hashtag中
+            
+            let hashVC = self.storyboard?.instantiateViewController(withIdentifier: "HashtagsVC") as! HashtagsViewController
+            self.navigationController?.pushViewController(hashVC, animated: true)
+        }
+        
         //将indexPath赋值给usernameButton的layer属性的自定义变量
         cell.usernameButton.layer.setValue(indexPath, forKey: "index")
         //将indexPath赋值给commentButton的layer属性的自定义变量
@@ -244,6 +284,12 @@ class PostViewController: UITableViewController {
         //通过导航控制器到CommentVC
         let comment = self.storyboard?.instantiateViewController(withIdentifier: "CommentVC") as! CommentViewController
         self.navigationController?.pushViewController(comment, animated: true)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 点击More方法
+    /////////////////////////////////////////////////////////////////////////////////
+    @IBAction func moreButtonPressed(_ sender: UIButton) {
     }
     
 }

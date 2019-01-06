@@ -7,7 +7,7 @@ class CommentCell: UITableViewCell {
 
     @IBOutlet weak var profileImage: UIImageView!
     @IBOutlet weak var usernameButton: UIButton!
-    @IBOutlet weak var commentLabel: UILabel!
+    @IBOutlet weak var commentLabel: KILabel!
     @IBOutlet weak var dateLabel: UILabel!
     
     /////////////////////////////////////////////////////////////////////////////////

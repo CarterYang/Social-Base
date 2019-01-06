@@ -235,6 +235,7 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
         let query = AVQuery(className: "Posts")
         query.whereKey("username", equalTo: guestArray.last!.username!)             //注意：这里有改动last?.username
         query.limit = postPerPage
+        query.addDescendingOrder("createdAt")
         query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
             //查询成功
             if error == nil {
@@ -302,6 +303,47 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
         followings.show = "Followings"
         
         self.navigationController?.pushViewController(followings, animated: true)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 下拉加载更多帖子
+    /////////////////////////////////////////////////////////////////////////////////
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >= scrollView.contentSize.height - self.view.frame.height {
+            self.loadMorePosts()
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 加载更多帖子方法
+    /////////////////////////////////////////////////////////////////////////////////
+    func loadMorePosts() {
+        if postPerPage <= pictureArray.count {
+            postPerPage = postPerPage + 12
+            
+            let query = AVQuery(className: "Posts")
+            query.whereKey("username", equalTo: guestArray.last!.username!)  //注意：这里有改动current()？.username
+            query.limit = postPerPage
+            query.addDescendingOrder("createdAt")
+            query.findObjectsInBackground { (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    //如果查询成功，清空两个Array
+                    self.postIdArray.removeAll(keepingCapacity: false)
+                    self.pictureArray.removeAll(keepingCapacity: false)
+                    
+                    for object in objects! {
+                        //将查询到的数据x添加到数组中
+                        self.postIdArray.append((object as AnyObject).value(forKey: "postId") as! String)
+                        self.pictureArray.append((object as AnyObject).value(forKey: "picture") as! AVFile)
+                    }
+                    print("loaded + \(self.postPerPage)")
+                    self.collectionView.reloadData()
+                }
+                else {
+                    print(error?.localizedDescription ?? "对象查找错误！")
+                }
+            }
+        }
     }
     
     /////////////////////////////////////////////////////////////////////////////////
