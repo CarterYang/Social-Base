@@ -153,6 +153,13 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
                         let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
                         self.navigationController?.pushViewController(guest, animated: true)
                     }
+                    //用户不存在
+                    else {
+                        let alert = UIAlertController(title: "\(mention)", message: "该用户不存在或已经被删除！", preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                        alert.addAction(ok)
+                        self.present(alert, animated: true, completion: nil)
+                    }
                 })
             }
         }

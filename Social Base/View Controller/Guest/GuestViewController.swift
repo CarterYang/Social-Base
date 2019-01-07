@@ -119,7 +119,14 @@ class GuestViewController: UICollectionViewController, UICollectionViewDelegateF
             if error == nil {
                 
                 //判断用户是否有数据
+                //处理不存在的用户
                 guard let objects = objects, objects.count > 0 else {
+                    let alert = UIAlertController(title: "\(guestArray.last?.username ?? "错误！")", message: "该用户不存在或已经被删除！", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: { (UIAlertAction) in
+                        _ = self.navigationController?.popViewController(animated: true)
+                    })
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
                     return
                 }
                 

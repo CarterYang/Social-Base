@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD0616F221E329ED00591A88 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0616F121E329ED00591A88 /* FeedViewController.swift */; };
 		AD41A15A21CC3066004FED30 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15921CC3066004FED30 /* ResetPasswordViewController.swift */; };
 		AD41A15C21CC6603004FED30 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15B21CC6603004FED30 /* HomeViewController.swift */; };
 		AD41A15E21CC665E004FED30 /* HomeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD41A15D21CC665E004FED30 /* HomeHeaderView.swift */; };
@@ -40,6 +41,7 @@
 /* Begin PBXFileReference section */
 		0736F3D4BF7296FFD29FAE8A /* Pods-Social Base.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Social Base.release.xcconfig"; path = "Pods/Target Support Files/Pods-Social Base/Pods-Social Base.release.xcconfig"; sourceTree = "<group>"; };
 		47AF73D047DF43D153187E0A /* Pods_Social_Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Social_Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD0616F121E329ED00591A88 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		AD41A15821CBFBE9004FED30 /* Social Base-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Social Base-Bridging-Header.h"; sourceTree = "<group>"; };
 		AD41A15921CC3066004FED30 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		AD41A15B21CC6603004FED30 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -101,6 +103,14 @@
 				0736F3D4BF7296FFD29FAE8A /* Pods-Social Base.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		AD0616F321E329F500591A88 /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				AD0616F121E329ED00591A88 /* FeedViewController.swift */,
+			);
+			path = Feed;
 			sourceTree = "<group>";
 		};
 		AD41A16621D0D89D004FED30 /* LogIn and SignUp */ = {
@@ -203,6 +213,7 @@
 			children = (
 				AD41A15821CBFBE9004FED30 /* Social Base-Bridging-Header.h */,
 				AD41A16621D0D89D004FED30 /* LogIn and SignUp */,
+				AD0616F321E329F500591A88 /* Feed */,
 				AD41A16721D0D8D0004FED30 /* Home Screen */,
 				AD41A16E21D38362004FED30 /* Edit Profile */,
 				AD41A16821D0D8EF004FED30 /* Follow and Unfollow */,
@@ -406,6 +417,7 @@
 				AD83F8F221C8FB3B00EFAB16 /* LogInViewController.swift in Sources */,
 				AD41A16D21D38357004FED30 /* EditViewController.swift in Sources */,
 				AD41A15E21CC665E004FED30 /* HomeHeaderView.swift in Sources */,
+				AD0616F221E329ED00591A88 /* FeedViewController.swift in Sources */,
 				AD41A15C21CC6603004FED30 /* HomeViewController.swift in Sources */,
 				AD41A16A21D0D95E004FED30 /* GuestViewController.swift in Sources */,
 				ADFC86D221D684AA0015A8E3 /* PostCell.swift in Sources */,

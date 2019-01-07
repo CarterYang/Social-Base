@@ -31,7 +31,8 @@ class HashtagsViewController: UICollectionViewController, UICollectionViewDelega
         
         //定义导航栏中的返回按钮
         self.navigationItem.hidesBackButton = true
-        let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(back))
+        //let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(back))
+        let backButton = UIBarButtonItem(image: UIImage(named: "back"), style: .plain, target: self, action: #selector(back))
         self.navigationItem.leftBarButtonItem = backButton
         
         //实现向右滑返回效果

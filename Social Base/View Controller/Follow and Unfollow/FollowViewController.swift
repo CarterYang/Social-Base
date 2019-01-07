@@ -24,6 +24,17 @@ class FollowViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //定义导航栏中的返回按钮
+        self.navigationItem.hidesBackButton = true
+        //let backButton = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        let backButton = UIBarButtonItem(image: UIImage(named: "back"), style: .plain, target: self, action: #selector(back))
+        self.navigationItem.leftBarButtonItem = backButton
+        
+        //实现向右滑返回效果
+        let backSwipe = UISwipeGestureRecognizer(target: self, action: #selector(back))
+        backSwipe.direction = .right
+        self.view.addGestureRecognizer(backSwipe)
+        
         //Table的格式
         tableView.rowHeight = view.frame.width / 4
         tableView.separatorStyle = .none
@@ -156,6 +167,14 @@ class FollowViewController: UITableViewController {
                 print(error?.localizedDescription ?? "无法载入关注信息！")
             }
         })
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 返回按钮
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func back() {
+        //退回到之前的控制器
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     /////////////////////////////////////////////////////////////////////////////////

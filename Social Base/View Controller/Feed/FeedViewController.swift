@@ -3,91 +3,62 @@ import AVOSCloud
 import AVOSCloudIM
 import AVOSCloudCrashReporting
 
-//全局变量
-var postId = [String]()
+class FeedViewController: UITableViewController {
 
-class PostViewController: UITableViewController {
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
     
-    var profileImageArray = [AVFile]()
+    //储存云端数据的数组
     var usernameArray = [String]()
+    var profileImageArray = [AVFile]()
     var dateArray = [Date]()
-    var postImageArray = [AVFile]()
-    var postIdArray = [String]()
+    var postArray = [AVFile]()
     var titleArray = [String]()
-
+    var postIdArray = [String]()
+    //储存当前所关注的人
+    var followArray = [String]()
+    //每次从云端下载照片的数量
+    var postPerPage: Int = 10
+    
+    //刷新控件,负责滚动视图拉拽的刷新动画
+    var refresher = UIRefreshControl()
+    
+    
     /////////////////////////////////////////////////////////////////////////////////
     // MARK: 屏幕初始化
     /////////////////////////////////////////////////////////////////////////////////
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        //导航栏的title
+        self.navigationItem.title = "聚合"
         
-        //定义返回按钮
-        self.navigationItem.hidesBackButton = true
-        //let backButton = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
-        let backButton = UIBarButtonItem(image: UIImage(named: "back"), style: .plain, target: self, action: #selector(back))
-        self.navigationItem.leftBarButtonItem = backButton
-        
-        //向右滑动屏幕返回之前的控制器
-        let backSwipe = UISwipeGestureRecognizer(target: self, action: #selector(back))
-        backSwipe.direction = .right
-        self.view.isUserInteractionEnabled = true
-        self.view.addGestureRecognizer(backSwipe)
-        
-        //动态单元格高度设置
+        //设置单元格的动态行高
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 550
         tableView.separatorStyle = .singleLine
         
-        self.navigationItem.title = "照片"
+        //设置refresher控件
+        refresher.addTarget(self, action: #selector(loadPosts), for: .valueChanged)
+        self.view.addSubview(refresher)
         
-        //对指定pistId帖子的查询
-        let postQuery = AVQuery(className: "Posts")
-        postQuery.whereKey("postId", equalTo: postId.last!)
-        postQuery.findObjectsInBackground { (objects: [Any]?, error: Error?) in
-            //清空数组
-            self.profileImageArray.removeAll(keepingCapacity: false)
-            self.usernameArray.removeAll(keepingCapacity: false)
-            self.dateArray.removeAll(keepingCapacity: false)
-            self.postImageArray.removeAll(keepingCapacity: false)
-            self.postIdArray.removeAll(keepingCapacity: false)
-            self.titleArray.removeAll(keepingCapacity: false)
-            
-            for object in objects! {
-                self.profileImageArray.append((object as AnyObject).value(forKey: "profileImage") as! AVFile)
-                self.usernameArray.append((object as AnyObject).value(forKey: "username") as! String)
-                self.dateArray.append((object as AnyObject).createdAt!)
-                self.postImageArray.append((object as AnyObject).value(forKey: "picture") as! AVFile)
-                self.postIdArray.append((object as AnyObject).value(forKey: "postId") as! String)
-                self.titleArray.append((object as AnyObject).value(forKey: "postTitle") as! String)
-            }
-            self.tableView.reloadData()
-        }
+        //定位activity indicator view的位置，让其水平居中
+        indicator.center.x = tableView.center.x
+        
+        //接受UploadVC发来的上传成功的Notification，用来刷新CollectionView的帖子
+        NotificationCenter.default.addObserver(self, selector: #selector(uploaded), name: NSNotification.Name(rawValue: "uploaded"), object: nil)
         
         //当收到like通知后，刷新页面
         NotificationCenter.default.addObserver(self, selector: #selector(refresh), name: NSNotification.Name.init(rawValue: "liked"), object: nil)
+        
+        //从云端载入帖子
+        loadPosts()
     }
-    
-    
-//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        postImageArray[indexPath.row].getDataInBackground { (data: Data?, error: Error?) in
-//            let postHeight = UIImage(data: data!)!.size.height
-//
-//            //tableView.rowHeight = postHeight + 120
-//            var aaa = postHeight + 120
-//
-//        }
-//        return 550
-//    }
 
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 设定Table
+    // MARK: 设置单元格布局
     /////////////////////////////////////////////////////////////////////////////////
-//    override func numberOfSections(in tableView: UITableView) -> Int {
-//        return 0
-//    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return usernameArray.count
+        return postIdArray.count
     }
     
     override func tableView(_ tableview: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -106,14 +77,14 @@ class PostViewController: UITableViewController {
         }
         
         //配置帖子
-        postImageArray[indexPath.row].getDataInBackground { (data: Data?, error: Error?) in
+        postArray[indexPath.row].getDataInBackground { (data: Data?, error: Error?) in
             //self.tableView.beginUpdates()
             
-//            let postWidth = Float(UIImage(data: data!)!.size.width)
-//            let postHeight = Float(UIImage(data: data!)!.size.height)
-//            let postRatio = postHeight / postWidth
-//            cell.postImage.frame.size.width = UIScreen.main.bounds.width
-//            cell.postImage.frame.size.height = CGFloat(Float(UIScreen.main.bounds.width) * postRatio)
+            //            let postWidth = Float(UIImage(data: data!)!.size.width)
+            //            let postHeight = Float(UIImage(data: data!)!.size.height)
+            //            let postRatio = postHeight / postWidth
+            //            cell.postImage.frame.size.width = UIScreen.main.bounds.width
+            //            cell.postImage.frame.size.height = CGFloat(Float(UIScreen.main.bounds.width) * postRatio)
             
             cell.postImage.image = UIImage(data: data!)
             //cell.postImage.frame.size.width = (UIImage(data: data!)?.size.width)!
@@ -156,7 +127,7 @@ class PostViewController: UITableViewController {
         if difference.weekOfMonth! > 0 {
             cell.dateLabel.text = "\(difference.weekOfMonth!)周"
         }
-
+        
         //根据用户是否喜欢设置LikeButton按钮
         let didLike = AVQuery(className: "Likes")
         didLike.whereKey("by", equalTo: AVUser.current()!.username!)
@@ -200,7 +171,7 @@ class PostViewController: UITableViewController {
                         let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
                         self.navigationController?.pushViewController(guest, animated: true)
                     }
-                    //用户不存在
+                        //用户不存在
                     else {
                         let alert = UIAlertController(title: "\(mention)", message: "该用户不存在或已经被删除！", preferredStyle: .alert)
                         let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
@@ -234,25 +205,122 @@ class PostViewController: UITableViewController {
         
         return cell
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 刷新页面
+    // MARK: 从云端载入帖子
     /////////////////////////////////////////////////////////////////////////////////
-    @objc func refresh() {
-        self.tableView.reloadData()
+    @objc func loadPosts() {
+        AVUser.current()?.getFollowees({ (objects: [Any]?, error: Error?) in
+            if error == nil {
+                //清空数组
+                self.followArray.removeAll(keepingCapacity: false)
+                
+                for object in objects! {
+                    self.followArray.append((object as AnyObject).username!)
+                }
+                
+                //添加当前用户到followArray数组中
+                self.followArray.append(AVUser.current()!.username!)
+                
+                let query = AVQuery(className: "Posts")
+                query.whereKey("username", containedIn: self.followArray)
+                query.limit = self.postPerPage
+                query.addDescendingOrder("createdAt")
+                query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                    if error == nil {
+                        //清空数组
+                        self.usernameArray.removeAll(keepingCapacity: false)
+                        self.profileImageArray.removeAll(keepingCapacity: false)
+                        self.dateArray.removeAll(keepingCapacity: false)
+                        self.postArray.removeAll(keepingCapacity: false)
+                        self.titleArray.removeAll(keepingCapacity: false)
+                        self.postIdArray.removeAll(keepingCapacity: false)
+                        
+                        for object in objects! {
+                            self.usernameArray.append((object as AnyObject).value(forKey: "username") as! String)
+                            self.profileImageArray.append((object as AnyObject).value(forKey: "profileImage") as! AVFile)
+                            self.dateArray.append((object as AnyObject).createdAt!)
+                            self.postArray.append((object as AnyObject).value(forKey: "picture") as! AVFile)
+                            self.titleArray.append((object as AnyObject).value(forKey: "postTitle") as! String)
+                            self.postIdArray.append((object as AnyObject).value(forKey: "postId") as! String)
+                        }
+                        
+                        self.tableView.reloadData()
+                        self.refresher.endRefreshing()
+                    }
+                    else {
+                        print(error?.localizedDescription ?? "找不到帖子信息！")
+                    }
+                })
+            }
+        })
     }
     
     /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 返回按钮方法
+    // MARK: 下拉加载更多帖子
     /////////////////////////////////////////////////////////////////////////////////
-    @objc func back() {
-        //退回到之前
-        self.navigationController?.popViewController(animated: true)
-        //从postId中移除当前帖子的id
-        if !postId.isEmpty {
-            postId.removeLast()
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y >= scrollView.contentSize.height - scrollView.frame.height * 2 {
+            loadMore()
         }
-//        postRatio = 1
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 加载更多帖子方法
+    /////////////////////////////////////////////////////////////////////////////////
+    func loadMore() {
+        if postPerPage <= postIdArray.count {
+            //开始Indicator动画
+            indicator.startAnimating()
+            //将pagePerPage数量 + 10
+            postPerPage = postPerPage + 10
+            
+            AVUser.current()?.getFollowees({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    //清空数组
+                    self.followArray.removeAll(keepingCapacity: false)
+                    
+                    for object in objects! {
+                        self.followArray.append((object as AnyObject).username!)
+                    }
+                    
+                    //添加当前用户到followArray数组中
+                    self.followArray.append(AVUser.current()!.username!)
+                    
+                    let query = AVQuery(className: "Posts")
+                    query.whereKey("username", containedIn: self.followArray)
+                    query.limit = self.postPerPage
+                    query.addDescendingOrder("createdAt")
+                    query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                        if error == nil {
+                            //清空数组
+                            self.usernameArray.removeAll(keepingCapacity: false)
+                            self.profileImageArray.removeAll(keepingCapacity: false)
+                            self.dateArray.removeAll(keepingCapacity: false)
+                            self.postArray.removeAll(keepingCapacity: false)
+                            self.titleArray.removeAll(keepingCapacity: false)
+                            self.postIdArray.removeAll(keepingCapacity: false)
+                            
+                            for object in objects! {
+                                self.usernameArray.append((object as AnyObject).value(forKey: "username") as! String)
+                                self.profileImageArray.append((object as AnyObject).value(forKey: "profileImage") as! AVFile)
+                                self.dateArray.append((object as AnyObject).createdAt!)
+                                self.postArray.append((object as AnyObject).value(forKey: "picture") as! AVFile)
+                                self.titleArray.append((object as AnyObject).value(forKey: "postTitle") as! String)
+                                self.postIdArray.append((object as AnyObject).value(forKey: "postId") as! String)
+                            }
+                            
+                            self.tableView.reloadData()
+                            //结束Indicator动画
+                            self.indicator.stopAnimating()
+                        }
+                        else {
+                            print(error?.localizedDescription ?? "无法加载帖子！")
+                        }
+                    })
+                }
+            })
+        }
     }
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -271,8 +339,22 @@ class PostViewController: UITableViewController {
             self.navigationController?.pushViewController(home, animated: true)
         }
         else {
-            let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
-            self.navigationController?.pushViewController(guest, animated: true)
+            let query = AVUser.query()
+            query.whereKey("username", equalTo: cell.usernameButton.titleLabel!.text!)
+            query.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if let object = objects?.last {
+                    guestArray.append(object as! AVUser)
+                    let guest = self.storyboard?.instantiateViewController(withIdentifier: "GuestVC") as! GuestViewController
+                    self.navigationController?.pushViewController(guest, animated: true)
+                }
+                //用户不存在
+                else {
+                    let alert = UIAlertController(title: "错误", message: "该用户不存在或已经被删除！", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            })
         }
     }
     
@@ -307,7 +389,7 @@ class PostViewController: UITableViewController {
             //Step 1: 从数组中删除相应的数据
             self.usernameArray.remove(at: i.row)
             self.profileImageArray.remove(at: i.row)
-            self.postImageArray.remove(at: i.row)
+            self.postArray.remove(at: i.row)
             self.dateArray.remove(at: i.row)
             self.titleArray.remove(at: i.row)
             self.postIdArray.remove(at: i.row)
@@ -415,5 +497,19 @@ class PostViewController: UITableViewController {
         let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alert.addAction(ok)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 上传成功后重新载入帖子
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func uploaded() {
+        loadPosts()
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 刷新页面
+    /////////////////////////////////////////////////////////////////////////////////
+    @objc func refresh() {
+        self.tableView.reloadData()
     }
 }

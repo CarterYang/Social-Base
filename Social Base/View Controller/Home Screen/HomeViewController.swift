@@ -36,9 +36,6 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         //设置CollectionView的背景色为白色
         self.collectionView.backgroundColor = .white
         
-        //接受UploadVC发来的上传成功的Notification，用来刷新CollectionView的帖子
-        NotificationCenter.default.addObserver(self, selector: #selector(uploaded), name: NSNotification.Name(rawValue: "uploaded"), object: nil)
-        
         //载入用户的posts
         loadPosts()
     }
@@ -270,13 +267,6 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         followings.show = "Followings"
         
         self.navigationController?.pushViewController(followings, animated: true)
-    }
-    
-    /////////////////////////////////////////////////////////////////////////////////
-    // MARK: 上传成功后重新载入帖子
-    /////////////////////////////////////////////////////////////////////////////////
-    @objc func uploaded() {
-        loadPosts()
     }
     
     /////////////////////////////////////////////////////////////////////////////////

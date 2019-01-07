@@ -33,6 +33,9 @@ class HomeHeaderView: UICollectionReusableView {
         //页面布局
         let width = UIScreen.main.bounds.width
         
+        //让button变成圆角
+        editProfile.layer.cornerRadius = editProfile.frame.width / 50
+        
         //头像布局
         profileImage.frame = CGRect(x: width / 16, y: 15, width: width / 4, height: width / 4)
         //统计数据布局

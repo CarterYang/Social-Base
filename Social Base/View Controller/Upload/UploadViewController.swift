@@ -183,7 +183,7 @@ class UploadViewController: UIViewController, UIImagePickerControllerDelegate, U
             if error == nil {
                 //发送上传通知
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "uploaded"), object: nil)
-                //将TabBar控制器中索引值为0的自控制器显示在手机屏幕上(回到HomeVC)
+                //将TabBar控制器中索引值为0的自控制器显示在手机屏幕上(回到FeedVC)
                 self.tabBarController?.selectedIndex = 0
                 //reset页面
                 self.viewDidLoad()
