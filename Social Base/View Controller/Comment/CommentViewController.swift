@@ -38,7 +38,8 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
         //navigation设置
         self.navigationItem.title = "评论"
         self.navigationItem.hidesBackButton = true
-        let backButton = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        //let backButton = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        let backButton = UIBarButtonItem(image: UIImage(named: "back"), style: .plain, target: self, action: #selector(back))
         self.navigationItem.leftBarButtonItem = backButton
         
         //开始禁止SendButton按钮

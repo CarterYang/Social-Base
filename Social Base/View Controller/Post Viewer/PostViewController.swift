@@ -23,7 +23,8 @@ class PostViewController: UITableViewController {
         
         //定义返回按钮
         self.navigationItem.hidesBackButton = true
-        let backButton = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        //let backButton = UIBarButtonItem(title: "返回", style: .plain, target: self, action: #selector(back))
+        let backButton = UIBarButtonItem(image: UIImage(named: "back"), style: .plain, target: self, action: #selector(back))
         self.navigationItem.leftBarButtonItem = backButton
         
         //向右滑动屏幕返回之前的控制器
@@ -221,7 +222,8 @@ class PostViewController: UITableViewController {
         cell.usernameButton.layer.setValue(indexPath, forKey: "index")
         //将indexPath赋值给commentButton的layer属性的自定义变量
         cell.commentButton.layer.setValue(indexPath, forKey: "index")
-        
+        //将indexPath赋值给moreButton的layer属性的自定义变量
+        cell.moreButton.layer.setValue(indexPath, forKey: "index")
         
         return cell
     }
@@ -290,6 +292,121 @@ class PostViewController: UITableViewController {
     // MARK: 点击More方法
     /////////////////////////////////////////////////////////////////////////////////
     @IBAction func moreButtonPressed(_ sender: UIButton) {
+        let i = sender.layer.value(forKey: "index") as! IndexPath
+        let cell = tableView.cellForRow(at: i) as! PostCell
+        
+        //删除操作
+        let delete = UIAlertAction(title: "删除", style: .default) { (UIAlertAction) in
+            //Step 1: 从数组中删除相应的数据
+            self.usernameArray.remove(at: i.row)
+            self.profileImageArray.remove(at: i.row)
+            self.postImageArray.remove(at: i.row)
+            self.dateArray.remove(at: i.row)
+            self.titleArray.remove(at: i.row)
+            self.postIdArray.remove(at: i.row)
+            
+            //Step 2: 删除云端的记录
+            let postQuery = AVQuery(className: "Posts")
+            postQuery.whereKey("postId", equalTo: cell.postIdLabel.text!)
+            postQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteInBackground({ (success: Bool, error: Error?) in
+                            if success {
+                                //发送通知到rootViewController更新帖子 (HomeVC)
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "uploaded"), object: nil)
+                                //销毁当前控制器
+                                _ = self.navigationController?.popViewController(animated: true)
+                            }
+                            else {
+                                print(error?.localizedDescription ?? "删除帖子出错！")
+                            }
+                        })
+                    }
+                }
+                else {
+                    print(error?.localizedDescription ?? "找不到相关帖子！")
+                }
+            })
+            
+            //Step 3: 删除帖子的Like记录
+            let likeQuery = AVQuery(className: "Likes")
+            likeQuery.whereKey("to", equalTo: cell.postIdLabel.text!)
+            likeQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually()
+                    }
+                }
+            })
+            
+            //Step 4: 删除帖子相关的评论
+            let commentQuery = AVQuery(className: "Comments")
+            commentQuery.whereKey("to", equalTo: cell.postIdLabel.text!)
+            commentQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually()
+                    }
+                }
+            })
+            
+            //Step 5: 删除帖子相关的Hashtag
+            let hashtagQuery = AVQuery(className: "Hashtags")
+            hashtagQuery.whereKey("to", equalTo: cell.postIdLabel.text!)
+            hashtagQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually()
+                    }
+                }
+            })
+        }
+        
+        //投诉操作
+        let complain = UIAlertAction(title: "投诉", style: .default) { (UIAlertAction) in
+            //发送投诉到云端的Complain数据表
+            let complainObject = AVObject(className: "Complain")
+            complainObject["by"] = AVUser.current()?.username
+            complainObject["post"] = cell.postIdLabel.text
+            complainObject["to"] = cell.titleLabel.text
+            complainObject["owner"] = cell.usernameButton.titleLabel?.text
+            complainObject.saveInBackground({ (success: Bool, error: Error?) in
+                if success {
+                    self.alert(error: "投诉信息已提交成功", message: "感谢您的支持，我们将关注您提交的投诉信息！")
+                }
+                else {
+                    self.alert(error: "错误", message: error?.localizedDescription ?? "投诉提交出错！")
+                }
+            })
+        }
+        
+        // 取消操作
+        let cancel = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        
+        // 创建菜单控制器
+        let menu = UIAlertController(title: "菜单选项", message: nil, preferredStyle: .actionSheet)
+        
+        if cell.usernameButton.titleLabel?.text == AVUser.current()?.username {
+            menu.addAction(delete)
+            menu.addAction(cancel)
+        }
+        else {
+            menu.addAction(complain)
+            menu.addAction(cancel)
+        }
+        
+        //显示菜单
+        self.present(menu, animated: true, completion: nil)
     }
     
+    /////////////////////////////////////////////////////////////////////////////////
+    // MARK: 警告消息
+    /////////////////////////////////////////////////////////////////////////////////
+    func alert(error: String, message: String) {
+        let alert = UIAlertController(title: error, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+    }
 }
