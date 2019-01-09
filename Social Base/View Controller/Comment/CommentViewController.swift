@@ -579,7 +579,9 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             }
         }
         
-        //Step 4: 发送数据后重新设定视图表格
+
+        
+        //Step 6: 发送数据后重新设定视图表格
         commentTextField.text = ""
         commentTextField.frame.size.height = commentHeight
         commentTextField.frame.origin.y = sendButton.frame.origin.y
