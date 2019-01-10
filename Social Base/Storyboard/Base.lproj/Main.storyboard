@@ -653,6 +653,9 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <state key="normal" title="usernameButton"/>
+                                            <connections>
+                                                <action selector="usernameButtonPressed:" destination="nbj-mZ-a7C" eventType="touchUpInside" id="wiv-hM-eF6"/>
+                                            </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="infoLabel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ryv-fa-WDN">
                                             <rect key="frame" x="166" y="16" width="63" height="18"/>
@@ -689,11 +692,13 @@
             </objects>
             <point key="canvasLocation" x="2483" y="1374"/>
         </scene>
-        <!--我的-->
+        <!--Navigation View Controller-->
         <scene sceneID="6aq-Ms-HON">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="u9i-6a-PWC" customClass="NavigationViewController" customModule="Social_Base" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="我的" image="Profile" selectedImage="Profile_Selected" id="6Xp-St-FKu"/>
+                    <tabBarItem key="tabBarItem" title="" image="Profile" selectedImage="Profile_Selected" id="6Xp-St-FKu">
+                        <inset key="imageInsets" minX="0.0" minY="6" maxX="0.0" maxY="-6"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="hhI-QA-h6l">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -1345,11 +1350,13 @@
             </objects>
             <point key="canvasLocation" x="2482.608695652174" y="-1511.413043478261"/>
         </scene>
-        <!--聚合-->
+        <!--Navigation View Controller-->
         <scene sceneID="hTt-8v-eYI">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="FdT-Hx-Ab4" customClass="NavigationViewController" customModule="Social_Base" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="聚合" image="Home" selectedImage="Home_Selected" id="NN7-L4-JSr"/>
+                    <tabBarItem key="tabBarItem" title="" image="Home" selectedImage="Home_Selected" id="NN7-L4-JSr">
+                        <inset key="imageInsets" minX="0.0" minY="6" maxX="0.0" maxY="-6"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="SmW-ip-BoM">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -1364,11 +1371,13 @@
             </objects>
             <point key="canvasLocation" x="1806" y="-1511"/>
         </scene>
-        <!--搜索-->
+        <!--Navigation View Controller-->
         <scene sceneID="MCl-sW-Mvk">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="tOr-8O-e4Y" customClass="NavigationViewController" customModule="Social_Base" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="搜索" image="Search" selectedImage="Search_Selected" id="HK7-bm-7Md"/>
+                    <tabBarItem key="tabBarItem" title="" image="Search" selectedImage="Search_Selected" id="HK7-bm-7Md">
+                        <inset key="imageInsets" minX="0.0" minY="6" maxX="0.0" maxY="-6"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uJW-qC-0dq">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -1383,11 +1392,13 @@
             </objects>
             <point key="canvasLocation" x="1807" y="649"/>
         </scene>
-        <!--通知-->
+        <!--Navigation View Controller-->
         <scene sceneID="RF3-pC-Iui">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5YL-Ai-LC3" customClass="NavigationViewController" customModule="Social_Base" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="通知" image="Activity" selectedImage="Activity_Selected" id="Vvv-R7-nPq"/>
+                    <tabBarItem key="tabBarItem" title="" image="Activity" selectedImage="Activity_Selected" id="Vvv-R7-nPq">
+                        <inset key="imageInsets" minX="0.0" minY="6" maxX="0.0" maxY="-6"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="JGM-8O-eaY">
                         <rect key="frame" x="0.0" y="20" width="414" height="44"/>

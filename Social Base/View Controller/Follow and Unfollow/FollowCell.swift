@@ -35,6 +35,9 @@ class FollowCell: UITableViewCell {
         //改变profile image为圆形
         profileImage.layer.cornerRadius = profileImage.frame.width / 2
         profileImage.clipsToBounds = true //减掉多余的部分
+        
+        //改变关注按钮为圆角
+        followButton.layer.cornerRadius = followButton.frame.width / 20
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -56,6 +59,17 @@ class FollowCell: UITableViewCell {
                 if success {
                     self.followButton.setTitle("已关注", for: .normal)
                     self.followButton.backgroundColor = self.hexStringToUIColor(hex: "#26BAEE")
+                    
+                    //发送关注通知到云端
+                    let newsObj = AVObject(className: "News")
+                    newsObj["by"] = AVUser.current()?.username
+                    newsObj["profileImage"] = AVUser.current()?.object(forKey: "profileImage") as! AVFile
+                    newsObj["to"] = self.usernameLabel.text
+                    newsObj["owner"] = ""
+                    newsObj["postId"] = ""
+                    newsObj["type"] = "follow"
+                    newsObj["checked"] = "no"
+                    newsObj.saveEventually()
                 }
                 else {
                     print(error?.localizedDescription ?? "无法更改关注状态！")
@@ -69,6 +83,19 @@ class FollowCell: UITableViewCell {
                 if success {
                     self.followButton.setTitle("关 注", for: .normal)
                     self.followButton.backgroundColor = .lightGray
+                    
+                    //删除关注通知
+                    let newsQuery = AVQuery(className: "News")
+                    newsQuery.whereKey("by", equalTo: AVUser.current()!.username!)
+                    newsQuery.whereKey("to", equalTo: self.usernameLabel.text!)
+                    newsQuery.whereKey("type", equalTo: "follow")
+                    newsQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                        if error == nil {
+                            for object in objects! {
+                                (object as AnyObject).deleteEventually()
+                            }
+                        }
+                    })
                 }
                 else {
                     print(error?.localizedDescription ?? "无法更改关注状态！")

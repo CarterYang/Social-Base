@@ -1,11 +1,3 @@
-//
-//  FollowersViewController.swift
-//  Social Base
-//
-//  Created by Carter on 2018-12-23.
-//  Copyright © 2018 Carter. All rights reserved.
-//
-
 import UIKit
 import AVOSCloud
 import AVOSCloudIM

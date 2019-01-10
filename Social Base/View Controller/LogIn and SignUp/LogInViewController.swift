@@ -31,6 +31,9 @@ class LogInViewController: UIViewController {
 //        forgotPasswordButton.frame = CGRect(x: 10, y: passwordTextField.frame.origin.y + 30, width: self.view.frame.width - 20, height: 30)
 //        logInButton.frame = CGRect(x: 10, y: forgotPasswordButton.frame.origin.y + 50, width: self.view.frame.width - 20, height: 40)
 //        goToSignUpButton.frame = CGRect(x: 10, y: logInButton.frame.origin.y + 70, width: self.view.frame.width - 20, height: 30)
+        
+        //改变登录按钮为圆角
+        logInButton.layer.cornerRadius = logInButton.frame.width / 60
     }
 
     /////////////////////////////////////////////////////////////////////////////////

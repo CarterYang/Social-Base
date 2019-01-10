@@ -70,6 +70,17 @@ class HomeHeaderView: UICollectionReusableView {
                 if success {
                     self.editProfile.setTitle("已关注", for: .normal)
                     self.editProfile.backgroundColor = self.hexStringToUIColor(hex: "#26BAEE")
+                    
+                    //发送关注通知到云端
+                    let newsObj = AVObject(className: "News")
+                    newsObj["by"] = AVUser.current()?.username
+                    newsObj["profileImage"] = AVUser.current()?.object(forKey: "profileImage") as! AVFile
+                    newsObj["to"] = guestArray.last?.username
+                    newsObj["owner"] = ""
+                    newsObj["postId"] = ""
+                    newsObj["type"] = "follow"
+                    newsObj["checked"] = "no"
+                    newsObj.saveEventually()
                 }
                 else {
                     print(error?.localizedDescription ?? "无法关注对象")
@@ -83,6 +94,19 @@ class HomeHeaderView: UICollectionReusableView {
                 if success {
                     self.editProfile.setTitle("关 注", for: .normal)
                     self.editProfile.backgroundColor = .lightGray
+                    
+                    //删除关注通知
+                    let newsQuery = AVQuery(className: "News")
+                    newsQuery.whereKey("by", equalTo: AVUser.current()!.username!)
+                    newsQuery.whereKey("to", equalTo: guestArray.last!.username!)
+                    newsQuery.whereKey("type", equalTo: "follow")
+                    newsQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                        if error == nil {
+                            for object in objects! {
+                                (object as AnyObject).deleteEventually()
+                            }
+                        }
+                    })
                 }
                 else {
                     print(error?.localizedDescription ?? "无法取消关注对象")

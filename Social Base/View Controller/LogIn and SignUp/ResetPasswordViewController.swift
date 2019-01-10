@@ -20,6 +20,10 @@ class ResetPasswordViewController: UIViewController {
         hideTap.numberOfTapsRequired = 1
         self.view.isUserInteractionEnabled = true
         self.view.addGestureRecognizer(hideTap)
+        
+        //改变按钮为圆角
+        resetPasswordButton.layer.cornerRadius = resetPasswordButton.frame.width / 60
+        cancelButton.layer.cornerRadius = cancelButton.frame.width / 60
     }
 
     /////////////////////////////////////////////////////////////////////////////////

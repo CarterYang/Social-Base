@@ -61,6 +61,9 @@ class SignUpViewController: UIViewController, UIImagePickerControllerDelegate, U
 //        repeatPasswordTextField.frame = CGRect(x: 20, y: passwordTextField.frame.origin.y + 50, width: viewWidth - 40, height: 30)
 //        signUpButton.frame = CGRect(x: 20, y: repeatPasswordTextField.frame.origin.y + 50, width: viewWidth - 40, height: 30)
 //        goToLogInButton.frame = CGRect(x: 20, y: signUpButton.frame.origin.y + 70, width: viewWidth - 40, height: 30)
+        
+        //改变注册按钮为圆角
+        signUpButton.layer.cornerRadius = signUpButton.frame.width / 60
     }
     
     /////////////////////////////////////////////////////////////////////////////////

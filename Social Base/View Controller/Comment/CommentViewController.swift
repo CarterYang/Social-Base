@@ -318,15 +318,28 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
                     }
                 }
             })
+            
+            //Step 3: 删除评论和@mention的消息通知
+            let newsQuery = AVQuery(className: "News")
+            newsQuery.whereKey("by", equalTo: cell.usernameButton.titleLabel!.text!)
+            newsQuery.whereKey("to", equalTo: commentOwner.last!)
+            newsQuery.whereKey("type", containedIn: ["mention", "comment"])
+            newsQuery.findObjectsInBackground({ (objects: [Any]?, error: Error?) in
+                if error == nil {
+                    for object in objects! {
+                        (object as AnyObject).deleteEventually()
+                    }
+                }
+            })
 
-            //Step 3: 从TableView删除单元格
+            //Step 4: 从TableView删除单元格
             self.commentArray.remove(at: indexPath.row)
             self.dateArray.remove(at: indexPath.row)
             self.profileImageArray.remove(at: indexPath.row)
             self.usernameArray.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .fade)
 
-            //Step 4: 关闭单元格的编辑状态
+            //Step 5: 关闭单元格的编辑状态
             self.tableView.setEditing(false, animated: true)
         }
 
@@ -579,7 +592,40 @@ class CommentViewController: UIViewController, UITextViewDelegate, UITableViewDe
             }
         }
         
-
+        //Step 4: 当评论中包含@mention市发送通知给用户，该通知先储存到云端
+        var mentionCreated = Bool()     //此变量用来记录是否创建了@mention的通知记录
+        
+        for var word in words {
+            if word.hasPrefix("@") {
+                word = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
+                word = word.trimmingCharacters(in: CharacterSet.symbols)
+                
+                let newsObj = AVObject(className: "News")
+                newsObj["by"] = AVUser.current()?.username
+                newsObj["profileImage"] = AVUser.current()?.object(forKey: "profileImage") as! AVFile
+                newsObj["to"] = word
+                newsObj["owner"] = commentOwner.last
+                newsObj["postId"] = commentId.last
+                newsObj["type"] = "mention"
+                newsObj["checked"] = "no"
+                newsObj.saveEventually()
+                //如果创建了@mention记录，则让mentionCreated为true
+                mentionCreated = true
+            }
+        }
+        
+        //Step 5: 如果帖子与评论的发布者不是同一人，并且没有创建@mention记录的话，再发送另一个通知，该通知先储存到云端
+        if commentOwner.last != AVUser.current()?.username && mentionCreated == false {
+            let newsObj = AVObject(className: "News")
+            newsObj["by"] = AVUser.current()?.username
+            newsObj["profileImage"] = AVUser.current()?.object(forKey: "profileImage") as! AVFile
+            newsObj["to"] = commentOwner.last
+            newsObj["owner"] = commentOwner.last
+            newsObj["postId"] = commentId.last
+            newsObj["type"] = "comment"
+            newsObj["checked"] = "no"
+            newsObj.saveEventually()
+        }
         
         //Step 6: 发送数据后重新设定视图表格
         commentTextField.text = ""
